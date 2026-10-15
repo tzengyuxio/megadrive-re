@@ -26,7 +26,7 @@ KOEI，1991.OCT，MD（1 MB，無壓縮，68000 C 編譯，大端序）。2 個�
 | `rom.py` | ROM 解碼：文字與字型、外字、劇本（國、茶器、大名、武將）、登場武將、頭像（專屬＋組合）、調色盤、大地圖、戰場地形與戰場名 |
 | `data/charset.txt` | 字型 868 字對應的字元（沿用 SFC；`〓` = 外字，見 `rom.GAIJI`） |
 | `export.py` | 匯出 CSV／XLSX／PNG |
-| `export_kaodata.py` | 匯出 kaodata 資料集 `nobu4-md`（專屬頭像 204 張＋組合臉 8 頭） |
+| `export_kaodata.py` | 匯出 kaodata 資料集 `nobu4-md`（專屬頭像 204 張＋組合臉 8 頭；沒有武將用的 180–203 標上 `group` 事件人物／姫，有標籤的附 `name`） |
 | `verify_kaodata_export.py` | 資料集用參考渲染器畫出來，和 ROM 解碼逐 pixel 比對；checksums |
 | `verify_scenarios.py` | 2 劇本在選大名畫面的 RAM `$FF1000` 與 ROM 劇本區塊逐 byte 比對 |
 | `verify_generals.py` | 尾張的武將清單畫面：姓名與政治 戦闘 教養 魅力，含隨機改寫 RAM 的輪次 |

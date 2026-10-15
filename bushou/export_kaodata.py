@@ -6,13 +6,17 @@ verify_faces.py checks it). Colours use MAME's MD DAC levels (rom.LEVELS), so th
 runs of 8x8 cells from the head's 4 pages in the order top, bottom, eyes, nose, mouth (later runs overwrite
 earlier ones; runs per head from the table at 0x5DB1E), so every slot has 4 items: 40x48 canvases with 255
 outside the slot's run. Portraits 0-203 are the dedicated faces (204-235 are the composite pages). The ROM has no readings.
+Portraits 180-203 (codes 0xB4-0xCB) belong to no general; EXTRA_PORTRAITS gives them a group and, where the game
+labels the face, a name read from the ROM string it prints next to it.
 
 Usage: .venv/bin/python bushou/export_kaodata.py --out <dir> [--rom ROM]
 """
 import argparse
 import hashlib
 import os
+import re
 import sys
+import unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
@@ -34,6 +38,19 @@ from rom import (
 
 CANVAS = (FACE_W * 8, FACE_H * 8)
 PAGES = 4
+# face code -> (group, ROM address of the label the game shows with the face, or None)
+EXTRA_PORTRAITS = {
+    **{c: ("事件人物", 0x43F6A) for c in (0xB4, 0xB5, 0xB6)},  # $369DA: face 0xB4 + mood under "%s  領民" (0x43F66)
+    # visitor table: names 0x5FDCE, faces 0x5FE06 (indexed by $FF63C0)
+    0xB7: ("事件人物", 0x43F60), 0xB8: ("事件人物", 0x43F58), 0xB9: ("事件人物", 0x43F46),
+    0xBA: ("事件人物", 0x43F4E), 0xBC: ("事件人物", 0x43F36), 0xBE: ("事件人物", 0x43EFE),
+    0xBB: ("事件人物", 0x45900),  # 0x3F526, title line 鉄甲船造リ
+    0xBD: ("事件人物", 0x448B8),  # 0x39E24, 政秀寺開山 沢彦
+    0xBF: ("事件人物", 0x41DDE),  # 0x21894, 堺 会合衆 今井宗久
+    **{c: ("姫", None) for c in range(0xC0, 0xCA)},  # $77D6: princess face 0xC0 + n % 10
+    0xCA: ("事件人物", 0x44492),  # 0x394D4, 伊達家 北ノ方 義姫 ($77D6 also gives it to 伊達's princess)
+    0xCB: ("事件人物", 0x44204),  # 0x38E2C, 二本松城主 畠山義継
+}
 
 
 def cells_image(face: bytes, cells: list[int]) -> bytes:
@@ -80,6 +97,11 @@ def build(rom_path: str) -> tuple[dict, list[bytes]]:
         variants.append({"id": str(head), "label": f"頭 {head}", "parts": parts})
 
     portraits = [{"img": add(bytes(rom.face_pixels(n)), blob=1), "code": f"{n:04X}"} for n in range(PORTRAIT_COUNT)]
+    for code, (group, label) in EXTRA_PORTRAITS.items():
+        portraits[code]["group"] = group
+        if label:
+            text = re.sub(r"\x1b.", "", rom.text(rom.data[label:label + 40]))  # drop colour / kana-mode escapes
+            portraits[code]["name"] = unicodedata.normalize("NFKC", text)  # half-width kana -> full-width
 
     characters = []
     for c in distinct_characters(rom):
