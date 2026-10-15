@@ -30,3 +30,11 @@
 ## 壓縮
 
 光榮 1992–93 年的 MD 作品（全国版、三國志III、覇王伝）用和 SFC 相同的 KOEI LZ 格式（武将風雲録、三國志II 沒有壓縮），但 MD 的解碼器把查表寫成程式碼，ROM 裡找不到 `tools/koei_lz.py` 用來定位的表。可以把 `koei_lz.BLOCK` 接在 ROM 後面當表用（全国版的做法），或用 san3／haouden 的 `lz.py`（不需要表的寫法）。元朝秘史美版用的是另一種 MD 自己的 LZ（`genchou/rom.py`）。
+
+## kaodata 匯出
+
+光榮作品的頭像依 kaodata 的 `docs/data-format.md` 匯出（`<game>/export_kaodata.py --out <dir>`，共用 `tools/kaodata.py`），交接時輸出到 kaodata 的 `data-local/<id>/`，再在 kaodata 跑 `pnpm verify data-local/<id>`。
+
+- **色盤換算**：6 款（`nobu2-md`、`nobu4-md`、`nobu5-md`、`san2-md`、`san3-md`、`genchou-md`）一律用 MAME 色階，CRAM word `----BBB-GGG-RRR-` 的每個 3-bit 值 0–7 → 0, 52, 87, 116, 144, 172, 206, 255（各遊戲 `rom.py` 的 `md_rgb`）。這是 MAME 截圖的實際輸出，驗證時能逐 pixel 一致。
+- `name` 照 ROM 原文（錯字照錄），史書寫法放 `nameHistorical`；`reading` 只在 ROM 有讀音時給，全形平假名、姓名之間空一格。外部來源的人名不放進資料集。
+- 沒有人物使用但有意義的頭像加 `group`（如「姫」「事件人物」），名字要有 ROM 依據才給 `name`。
