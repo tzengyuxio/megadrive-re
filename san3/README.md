@@ -29,7 +29,7 @@ KOEI，1992.AUG，MD（1.5 MB，68000 C 編譯，大端序）。6 個劇本，46
 | `rom.py` | ROM 解碼：文字（SJIS＋外字 48 字）、字型、人物、6 劇本（人物、州、勢力、header、寶物持有者）、州名、寶物、頭像（一般＋合成）與調色盤、大地圖、戰場 |
 | `lz.py` | MD 版 KOEI LZ 解碼（`$3374` 的 C 實作，沒有 SFC 的查表區塊） |
 | `export.py` | 匯出 CSV／XLSX／PNG |
-| `export_kaodata.py` | 匯出 kaodata 資料集 `san3-md`（一般頭像 307 張＋合成臉 13 型） |
+| `export_kaodata.py` | 匯出 kaodata 資料集 `san3-md`（一般頭像 307 張＋合成臉 13 型）；讀音在姓名間加空白（`data/surnames.tsv`）；沒人用的頭像標 `group`：事件人物 10 位（附名字）、新君主／新武將男女 |
 | `verify_scenarios.py` | 6 劇本：劇本載入器跑完（`$1BCB4`）時 dump RAM，與 rom.py 逐欄比對 |
 | `verify_persons.py` | 改寫 RAM 的州人物串列，讓劉備的武将一覧列出 531 人；用遊戲字型從截圖讀回姓名與 7 個數值 |
 | `verify_text.py` | 同上，但先把 ROM 的人名換成字型的每個碼（2 輪），逐格比對畫出的 16 × 16 字形 |
