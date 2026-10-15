@@ -23,7 +23,7 @@ KOEI，1993，MD（ROM 表頭 `(C)T-76 1993.DEC`，`GM T-76153 -00`，2 MB，che
 | `rom.py` | ROM 解碼：劇本（人物、城、大名）、後登場人物、名稱表、城的地圖位置、合戦與城類表、頭像（專屬＋組合） |
 | `lz.py` | KOEI LZ 解壓 |
 | `export.py` | 匯出 CSV／XLSX／PNG |
-| `export_kaodata.py` | 匯出 kaodata 統一格式資料集 `nobu5-md`（348 張專屬頭像＋6 組組合臉） |
+| `export_kaodata.py` | 匯出 kaodata 統一格式資料集 `nobu5-md`（348 張專屬頭像＋6 組組合臉；沒有人物用的 27 張標上 `group` 姫／事件人物／不明，有標籤的附 `name`） |
 | `verify_kaodata_export.py` | 資料集用參考渲染器畫出來，和 ROM 解碼逐 pixel 比對；checksums |
 | `verify_scenarios.py` | 3 劇本載入後的 RAM 與 ROM 劇本映像逐 byte 比對，再從 RAM 解碼比對 |
 | `verify_faces.py` | 927 個頭像碼逐一換進選大名確認畫面，比對遊戲寫進 VRAM 的 tile 與 CRAM 調色盤 |

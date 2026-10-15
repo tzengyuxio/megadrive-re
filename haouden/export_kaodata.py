@@ -6,7 +6,8 @@ per face group (0-4 and 6; $6F44 never returns 5). The game's build order become
 taking variant v of the part's LZ table (index group * 5 + v, v from the code bits) and writing whole 8x8 tiles
 from the part's first tile on, later parts overwriting earlier ones; every item is a 40x48 canvas with 255
 outside the tiles it writes. Portraits are the 348 LZ streams of the portrait table. Characters are the 817
-person ids; the face id is the person id. The ROM has no readings.
+person ids; the face id is the person id. The ROM has no readings. Portraits no person uses get a group from
+EXTRA_PORTRAITS and, where the game shows a label with the face, a name read from that ROM string.
 
 Usage: .venv/bin/python haouden/export_kaodata.py --out <dir> [--rom ROM]
 """
@@ -30,10 +31,24 @@ from rom import (
     Rom,
     decode_tile,
     md_rgb,
+    text,
 )
 
 CANVAS = (FACE_W * 8, FACE_H * 8)
 SLOTS = [(f"part{p}", f"部位{p + 1}") for p in range(FACE_PART_COUNT)]
+# portrait -> (group, ROM address of the label shown with it, or None). Face codes 0x36E-0x379 are portraits 0-11
+# (0x22E2C: 0x36E + n under "%s家姫君"), 0x392-0x397 / 0x39A-0x3A0 are portraits 327-332 / 333-339;
+# portraits 151 and 152 are the faces of person ids 139 and 140, which have no person record.
+EXTRA_PORTRAITS = {
+    0: ("姫", 0x559F4),  # 0x1BA04: face 0x36E with お市の方 (pointer 0x74BB4)
+    **{n: ("姫", None) for n in (1, 2, 3, 4, 6, 7, 8, 9, 10, 11)},
+    5: ("姫", 0x549B2),  # 0x1C95C: face 0x373 with 義姫
+    **{n: ("不明", None) for n in (151, 152, 327, 328, 329, 331, 332, 333, 334, 335, 338)},  # no reference found
+    330: ("事件人物", 0x556A4),  # 0x1C3B6: face 0x395 with ルイス＝フロイス (pointer 0x74BDC)
+    336: ("事件人物", 0x545B4),  # 0x17514: face 0x39D with the label 一向衆 (pointer 0x7328A)
+    337: ("事件人物", 0x54952),  # 0x18912: face 0x39E, then the label 南蛮商人 (0x1851A)
+    339: ("事件人物", None),  # 0x51B6A: face 0x3A0 in the ending (「征夷大将軍…」), no label
+}
 
 
 def tiles_image(first: int, raw: bytes) -> bytes:
@@ -70,6 +85,10 @@ def build(rom_path: str) -> tuple[dict, list[bytes]]:
 
     portraits = [{"img": add(bytes(rom.face_pixels(tiles=rom.portrait_tiles(n))), blob=1)}
                  for n in range(PORTRAIT_COUNT)]
+    for n, (group, label) in EXTRA_PORTRAITS.items():
+        portraits[n]["group"] = group
+        if label:
+            portraits[n]["name"] = text(rom.data[label:label + 40]).strip("\u3000")
 
     characters = []
     for pid, m in rom.person_master().items():
