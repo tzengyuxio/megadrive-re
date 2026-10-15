@@ -26,7 +26,7 @@ KOEI，1991 年 10 月，Mega Drive（1 MB）。和 SFC 版スーパー三國志
 |------|------|
 | `rom.py` | ROM 解碼：人物、配置、州、相鄰、字型、頭像、大地圖、戰場 |
 | `export.py` | 匯出 CSV／XLSX／PNG |
-| `export_kaodata.py` | 匯出 kaodata 統一格式資料集 `san2-md`（姓名改用史書寫法、讀音分姓名） |
+| `export_kaodata.py` | 匯出 kaodata 統一格式資料集 `san2-md`（姓名照 ROM 原文、替代字另給 `nameHistorical`、讀音分姓名） |
 | `verify_kaodata_export.py` | 資料集與 ROM、checksums、模擬器畫面三方比對 |
 | `verify_scenarios.py` | 6 劇本開局 RAM 與 ROM 解碼比對 |
 | `verify_maps.py` | 大地圖與 41 張戰場，和模擬器 VRAM／CRAM 比對 |

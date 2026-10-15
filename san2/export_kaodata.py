@@ -32,15 +32,15 @@ from rom import (
 
 CANVAS = (40, 48)
 SURNAMES = os.path.join(HERE, "data", "surnames.tsv")
-# The ROM writes some names with a stand-in kanji (or cut to 3 kanji); the dataset uses the historical spelling.
-# Same 17 names as the SFC version (the MD name table is the SFC one, code for code).
-NAME_FIXES = {
-    "張資": "張咨", "雷同": "雷銅", "夏侯懋": "夏侯楙", "桓楷": "桓階", "陳嬉": "陳紀", "辛毘": "辛毗",
+# The ROM writes some names with a stand-in kanji (or cut to 3 kanji). `name` keeps the ROM spelling; these get
+# the historical one as `nameHistorical` (spec §7; 辛毘 is only a variant form of 辛毗, so it is left out).
+# Same names as the SFC version (the MD name table is the SFC one, code for code).
+NAME_HISTORICAL = {
+    "張資": "張咨", "雷同": "雷銅", "夏侯懋": "夏侯楙", "桓楷": "桓階", "陳嬉": "陳紀",
     "李湛": "李堪", "寥化": "廖化", "歩鷙": "歩隲", "蔡仲": "蔡中", "尚拳": "向挙", "尚寵": "向寵",
     "鮑龍": "鮑隆", "朵思王": "朶思大王", "金環結": "金環三結", "沙摩可": "沙摩柯", "母丘倹": "毌丘倹",
 }
-READING_FIXES = {"李堪": "りかん", "朶思大王": "だしだいおう", "金環三結": "きんかんさんけつ"}
-UNSPLIT = {"金環三結", "董荼奴"}  # 南蠻 names: no family / given split
+UNSPLIT = {"金環結", "董荼奴"}  # 南蠻 names: no family / given split
 
 
 def load_surnames() -> dict[str, str]:
@@ -105,9 +105,9 @@ def build(rom_path: str) -> tuple[dict, list[bytes]]:
     for p in rom.persons():
         code = p["face"]
         name = "".join(kanji.get(c, "?") for c in p["kanji_codes"])
-        name = NAME_FIXES.get(name, name)
-        reading = READING_FIXES.get(name, kaodata.hiragana(p["reading"]))
-        ch = {"id": p["id"], "name": name, "reading": split_reading(name, reading, surnames)}
+        ch = {"id": p["id"], "name": name, "reading": split_reading(name, kaodata.hiragana(p["reading"]), surnames)}
+        if name in NAME_HISTORICAL:
+            ch["nameHistorical"] = NAME_HISTORICAL[name]
         if is_composite(code):
             pal = code >> 13 & 3
             ch["face"] = {"variant": pal * COMPOSITE_HEADS + (code & 7),

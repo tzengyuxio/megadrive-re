@@ -60,7 +60,7 @@ KOEI，1991 年 10 月，Mega Drive。檔案 `roms/Sangokushi II (Japan).zip`（
 | 0–6 | 漢字碼 BE16，最多 3 字，`00` 結尾 |
 | 7–15 | 讀音，cp932 半形片假名，`00` 結尾（SFC 是 8 bytes） |
 
-讀音 352/352 和 SFC 相同。ROM 有 17 人用了替代字或截短，kaodata 資料集改用史書寫法（`export_kaodata.py` 的 `NAME_FIXES`，和 SFC 版同一份）；`persons.csv` 保留 ROM 原樣。
+讀音 352/352 和 SFC 相同。ROM 有 17 人用了替代字或截短。kaodata 資料集的 `name` 照 ROM 原文，其中 16 人另給史書寫法 `nameHistorical`（`export_kaodata.py` 的 `NAME_HISTORICAL`；辛毘／辛毗只是異體，依 kaodata 準則不填）；讀音也照 ROM。`persons.csv` 同樣是 ROM 原樣。
 
 ### 4.2 人物 `0x4BB14`，352 × 10 bytes
 
