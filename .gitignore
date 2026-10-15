@@ -1,0 +1,16 @@
+# ROM files (勿上傳)
+*.md.bin
+*.gen
+*.smd
+roms/
+
+# Output files
+*/output/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# macOS
+.DS_Store
