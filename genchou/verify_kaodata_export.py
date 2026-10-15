@@ -17,7 +17,7 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(os.path.dirname(HERE), "tools"))
 import kaodata
 import rom as R
-from export_kaodata import WOMEN_ID, characters
+from export_kaodata import CHILD_ID, WOMEN_ID, characters
 
 
 def main() -> None:
@@ -41,8 +41,9 @@ def main() -> None:
     bad_pt = [n for n in range(len(meta["portraits"])) if rgba({"portrait": n}) != (
         want(n) if n < R.WOMAN_PORTRAIT else want(n - R.WOMAN_PORTRAIT, True))]
     n_ch, n_pt = len(meta["characters"]), len(meta["portraits"])
-    women = sum(c["id"] >= WOMEN_ID for c in meta["characters"])
-    print(f"[render] characters {n_ch - len(bad_ch)}/{n_ch} ({women} women), portraits {n_pt - len(bad_pt)}/{n_pt} "
+    women = sum(WOMEN_ID <= c["id"] < CHILD_ID for c in meta["characters"])
+    kids = sum(c["id"] >= CHILD_ID for c in meta["characters"])
+    print(f"[render] characters {n_ch - len(bad_ch)}/{n_ch} ({women} women, {kids} children), portraits {n_pt - len(bad_pt)}/{n_pt} "
           f"match the ROM" + (f" (NG {bad_ch[:10]} {bad_pt[:10]})" if bad_ch or bad_pt else ""))
     with open(os.path.join(args.dataset, "checksums.json"), encoding="utf-8") as f:
         sums_ok = json.load(f) == kaodata.checksums(meta, blobs)

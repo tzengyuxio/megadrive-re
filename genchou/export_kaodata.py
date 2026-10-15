@@ -10,7 +10,9 @@ nose, mouth), so later parts cover earlier ones as in VRAM. Portraits 0-96 (0-56
 code + 0x39).
 
 Characters: the scenario persons and the family blocks distinct by (name, face code) get ids 0-; the 20 women
-get ids 1000-. The names are English (USA version), so there is no reading.
+get ids 1000-; the family blocks' children (face code at +18) distinct by (name, face code) get ids 2000-, as in
+the other genchou datasets. The names are English (USA version), so there is no reading and no nameZh. The women's
+portraits no character uses (the USA version keeps 20 of the women) get group 女性, without a name.
 
 Usage: .venv/bin/python genchou/export_kaodata.py --out <dir> [--rom ROM]
 """
@@ -32,6 +34,7 @@ SLOT_LABELS = {"eyes": "眼", "nose": "鼻", "mouth": "口", "top": "上部", "b
 # face group → culture, from the persons' culture field (+19 bits 2-4) of the composed faces (inferred)
 FACE_GROUPS = ["蒙古", "中國", "內亞", "印度", "日本", "西歐", "東歐", "伊斯蘭"]
 WOMEN_ID = 1000
+CHILD_ID = 2000
 
 
 def cells_image(rom: bytes, src: int, cells: list[int]) -> bytes:
@@ -57,6 +60,11 @@ def characters(rom: bytes) -> list[dict]:
             out.append({"id": len(seen) - 1, "name": r["name"], "code": r["face"], "woman": False})
     for w in R.women(rom):
         out.append({"id": WOMEN_ID + w["id"], "name": w["name"], "code": w["face"], "woman": True})
+    kids = []
+    for k in (k for n in range(R.SCENARIO_COUNT) for f in R.families(rom, n) for k in f["children"]):
+        if (key := (k["name"], k["face"])) not in kids:
+            kids.append(key)
+            out.append({"id": CHILD_ID + len(kids) - 1, "name": k["name"], "code": k["face"], "woman": False})
     return out
 
 
@@ -96,6 +104,10 @@ def build(rom_path: str) -> tuple[dict, list[bytes]]:
         else:
             ch["face"] = {"portrait": code + (R.WOMAN_PORTRAIT if c["woman"] else 0)}
         chars.append(ch)
+    used = {c["face"]["portrait"] for c in chars if "portrait" in c["face"]}
+    for n in range(R.WOMAN_PORTRAIT, R.PORTRAIT_COUNT):
+        if n not in used:
+            portraits[n]["group"] = "女性"
 
     meta = {
         "format": kaodata.FORMAT,
@@ -132,8 +144,10 @@ def main() -> None:
     kaodata.write_dataset(args.out, meta, blobs)
     chars = meta["characters"]
     mobs = [c for c in chars if "variant" in c["face"]]
-    women = [c for c in chars if c["id"] >= WOMEN_ID]
-    print(f"genchou-md: {len(chars)} characters ({len(chars) - len(women)} men, {len(women)} women; "
+    women = [c for c in chars if WOMEN_ID <= c["id"] < CHILD_ID]
+    kids = [c for c in chars if c["id"] >= CHILD_ID]
+    print(f"genchou-md: {len(chars)} characters ({len(chars) - len(women) - len(kids)} men, {len(women)} women, "
+          f"{len(kids)} children; "
           f"{len(chars) - len(mobs)} portrait, {len(mobs)} composite), {len(meta['composite']['variants'])} "
           f"variants, {len(meta['portraits'])} portraits, {len(meta['images'])} images")
     for name in [*meta["blobs"], "dataset.json", "checksums.json"]:

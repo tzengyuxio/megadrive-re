@@ -5,7 +5,7 @@ Temujin's face (tile $200, the first face slot), palette line 1 and the screensh
 other than 0, which is transparent) with the decoding.
 
 Codes: the 97 portraits (as person codes 0-0x60; women's codes are drawn as portrait code + 0x39 by $77CC) and
-every composed-face code in the persons, family blocks and women.
+every composed-face code in the persons, family blocks (with their children) and women.
 
 Usage: .venv/bin/python genchou/verify_faces.py [--rom ROM] [--codes 0,16,85F8]
 """
@@ -30,7 +30,7 @@ def codes_in_data(rom: bytes) -> list[int]:
     out = set()
     for n in range(R.SCENARIO_COUNT):
         out |= {p["face"] for p in R.persons(rom, n)}
-        out |= {p["face"] for f in R.families(rom, n) for p in f["persons"]}
+        out |= {p["face"] for f in R.families(rom, n) for p in f["persons"] + f["children"]}
     out |= {w["face"] for w in R.women(rom)}
     return sorted(c for c in out if c & 0x8000)
 

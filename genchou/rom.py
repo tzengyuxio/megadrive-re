@@ -147,7 +147,7 @@ def families(rom: bytes, n: int) -> list[dict]:
             rec = rom[p + CHILDREN_AT + CHILD_SIZE * j:p + CHILDREN_AT + CHILD_SIZE * (j + 1)]
             if not rec[0]:
                 break
-            kids.append({"name": text(rec[:13]), "raw": rec[13:].hex(" ")})
+            kids.append({"name": text(rec[:13]), "raw": rec[13:].hex(" "), "face": be16(rec, 18)})
         out.append({"house": rom[FAMILY_HOUSES + 6 * n + k], "address": p, "persons": rows, "children": kids})
     return out
 
