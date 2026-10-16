@@ -31,6 +31,8 @@
 - 驗證頭像：用 replay 把畫頭像函式的參數改成 `moveq #n` 並關掉隨機變體，就能逐張讓遊戲畫（提督の決断）；驗證地圖：在出港訊息時改寫艦隊座標，讓遊戲畫任意區塊（大航海時代）。
 - 光榮 1992 年的 MD 作品，資料表多半和 SFC 逐值相同（只換成大端序、4-byte 指標），可以拿 SFC 版解出的值當樣板在 ROM 裡搜尋定位（エアーマネジメント）。
 - 會眨眼／動嘴的頭像，截圖比對前要讀 plane A name table，把指向動畫 tile 的格子排除（エアーマネジメント）。
+- 驗證頭像的捷徑：改名表上某人的頭像碼，配一場固定會出頭像的開場事件，一個 savestate 就能測完全部碼（太閤立志伝）；或用 hook 反覆呼叫遊戲自己的組圖／解壓函式、換參數，不必走到該畫面（大航海時代II `$B408`、Liberty or Death 借 `$3C50` 解戰場 LZ）。
+- 美版選單多半用 C 確認，A 無效（Liberty or Death）。MD 移植版的 LE word 資料有時整段位元組對調存放，字串會變成 `ILEBTR_YEH_XAM` 這種樣子。
 - 畫面剛出來時調色盤可能還在淡入，讀 CRAM 要等淡入結束。VSRAM 捲動 8 時截圖的 y 也差 8。
 - 按鍵：有些遊戲片頭要按 A 才跳過、標題要連按 START；命令選單的按鍵常要按住約 20 幀才反應，按太久方向鍵又會自動連續移動。`replay` 的 `at` 要算進 steps 本身的長度（每次按鍵＝hold＋20 幀放開）。
 - `drive.py` 的 `--window`／`--reads` 結束幀若超過腳本總長，會什麼都不印、也不報錯，要讓視窗在最後一幀之前結束。
@@ -46,6 +48,7 @@
 
 光榮作品的頭像依 kaodata 的 `docs/data-format.md` 匯出（`<game>/export_kaodata.py --out <dir>`，共用 `tools/kaodata.py`），交接時輸出到 kaodata 的 `data-local/<id>/`，再在 kaodata 跑 `pnpm verify data-local/<id>`。
 
-- **色盤換算**：所有資料集（`nobu2-md`、`nobu4-md`、`nobu5-md`、`san2-md`、`san3-md`、`genchou-md`、`koukai-md`、`royal-md`、`tk-md`、`air-md`、`europe-md`）一律用 MAME 色階，CRAM word `----BBB-GGG-RRR-` 的每個 3-bit 值 0–7 → 0, 52, 87, 116, 144, 172, 206, 255（各遊戲 `rom.py` 的 `md_rgb`）。這是 MAME 截圖的實際輸出，驗證時能逐 pixel 一致。
+- **色盤換算**：所有資料集（`nobu2-md`、`nobu4-md`、`nobu5-md`、`san2-md`、`san3-md`、`genchou-md`、`koukai-md`、`royal-md`、`tk-md`、`air-md`、`europe-md`、`taikoh-md`、`air2-md`、`koukai2-md`、`liberty-md`）一律用 MAME 色階，CRAM word `----BBB-GGG-RRR-` 的每個 3-bit 值 0–7 → 0, 52, 87, 116, 144, 172, 206, 255（各遊戲 `rom.py` 的 `md_rgb`）。這是 MAME 截圖的實際輸出，驗證時能逐 pixel 一致。
 - `name` 照 ROM 原文（錯字照錄），史書寫法放 `nameHistorical`；`reading` 只在 ROM 有讀音時給，全形平假名、姓名之間空一格。外部來源的人名不放進資料集。
+- 同一人的其他樣貌放 `expressions`，`tools/kaodata.checksums` 會一併算 `ch:<id>/<k>`。
 - 沒有人物使用但有意義的頭像加 `group`（如「姫」「事件人物」），名字要有 ROM 依據才給 `name`。

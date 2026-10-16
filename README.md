@@ -20,6 +20,10 @@ MD／Genesis 歷史策略遊戲（非光榮為主，例如三國志列傳）的 
 | [teitoku](teitoku/) | 提督の決断 | KOEI 1992 | 9 劇本、提督、艦船、基地、艦隊、頭像、世界地圖；kaodata `tk-md`；作戰大地圖未解 |
 | [airmanage](airmanage/) | エアーマネジメント・大空に賭ける | KOEI 1992 | 2 劇本、都市、距離、機種、製造商、頭像（部下＋交涉對象＋廠商）、大地圖；kaodata `air-md` |
 | [europe](europe/) | ヨーロッパ戦線 | KOEI 1993 | 6 劇本、將領、領袖、都市、兵器、頭像、戰場地形；kaodata `europe-md`；戰場畫面未解 |
+| [taikou](taikou/) | 太閤立志伝 | KOEI 1993 | 人物、勢力、城、頭像（專屬＋組合臉）；kaodata `taikoh-md`；大地圖、戰場未做 |
+| [airmanage2](airmanage2/) | エアーマネジメントII 航空王をめざせ | KOEI 1994 | 4 劇本、都市、機種、事件、頭像（秘書＋職員＋國家代表＋廠商）、世界與地區地圖；kaodata `air2-md` |
+| [daikoukai2](daikoukai2/) | 大航海時代II | KOEI 1994 | 人物、VIP、女性、船種、港、道具、發見物、頭像（專屬＋組合臉）、世界地圖格資料；kaodata `koukai2-md`；地圖圖形未解 |
+| [dokuritsu](dokuritsu/) | Liberty or Death（独立戦争，美國限定） | KOEI 1994 | 劇本、人物、事件人物、地點、州、頭像（專屬＋組合臉）、大地圖、HEX 戰場格資料；kaodata `liberty-md` |
 | [sgz5](sgz5/) | San Guo Zhi V（中國盜版，三國志V 移植改作） | — | 7 劇本、人物、城、勢力、寶物、頭像、選君主地圖；非光榮正式作品，不出 kaodata |
 
 各遊戲的驗證方式與結果（皆以 MAME 跑遊戲本身的程式）寫在各自的 README。
