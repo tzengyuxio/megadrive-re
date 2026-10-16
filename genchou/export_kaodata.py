@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Export MD Genghis Khan II - Clan of the Gray Wolf as a kaodata dataset (genchou-md, format kaodata/1).
+"""Export MD 蒼き狼と白き牝鹿・元朝秘史 as a kaodata dataset (genchou-md, format kaodata/1): the Japanese version by
+default (the other genchou datasets are Japanese); the USA Genghis Khan II with --rom.
 
 Pixels are the colour numbers 0-15 of palette line 1 (rom.FACE_PALETTE, MAME's MD colour levels); every face of
 the game uses it. Composed faces ($73FE): one variant per head (56 = group * 7 + type, group = code bits 12-14).
@@ -9,10 +10,12 @@ items (40x48 canvases, 255 outside the part's tiles). The slot order is the game
 nose, mouth), so later parts cover earlier ones as in VRAM. Portraits 0-96 (0-56 men, 57-96 women = woman face
 code + 0x39).
 
-Characters: the scenario persons and the family blocks distinct by (name, face code) get ids 0-; the 20 women
-get ids 1000-; the family blocks' children (face code at +18) distinct by (name, face code) get ids 2000-, as in
-the other genchou datasets. The names are English (USA version), so there is no reading and no nameZh. The women's
-portraits no character uses (the USA version keeps 20 of the women) get group 女性, without a name.
+Characters: the scenario persons and the family blocks distinct by (name, face code) get ids 0-; the women of the
+4 scenarios (Japanese: block B of each scenario; USA: one table of 20) distinct the same way get ids 1000-; the
+family blocks' children distinct by (name, face code) get ids 2000-, as in the other genchou datasets. Japanese
+names written only in kana get a reading (hiragana, ・ → space, as genchou-sfc); names with kanji and the USA's
+English names have none. No version has Chinese names, so there is no nameZh. Women's portraits no character uses
+(the USA version keeps 20 of the women; the Japanese one uses every portrait) get group 女性, without a name.
 
 Usage: .venv/bin/python genchou/export_kaodata.py --out <dir> [--rom ROM]
 """
@@ -58,14 +61,23 @@ def characters(rom: bytes) -> list[dict]:
         if (key := (r["name"], r["face"])) not in seen:
             seen.append(key)
             out.append({"id": len(seen) - 1, "name": r["name"], "code": r["face"], "woman": False})
-    for w in R.women(rom):
-        out.append({"id": WOMEN_ID + w["id"], "name": w["name"], "code": w["face"], "woman": True})
+    women = []
+    for w in (w for n in range(R.SCENARIO_COUNT) for w in R.women(rom, n)):
+        if (key := (w["name"], w["face"])) not in women:
+            women.append(key)
+            out.append({"id": WOMEN_ID + len(women) - 1, "name": w["name"], "code": w["face"], "woman": True})
     kids = []
     for k in (k for n in range(R.SCENARIO_COUNT) for f in R.families(rom, n) for k in f["children"]):
         if (key := (k["name"], k["face"])) not in kids:
             kids.append(key)
             out.append({"id": CHILD_ID + len(kids) - 1, "name": k["name"], "code": k["face"], "woman": False})
     return out
+
+
+def reading(name: str) -> str | None:
+    """Kana-only names -> hiragana ('・' becomes a space); names with kanji or latin letters have none."""
+    s = kaodata.hiragana(name).replace("・", " ")
+    return s if all("ぁ" <= c <= "ゖ" or c in "ー " for c in s) else None
 
 
 def build(rom_path: str) -> tuple[dict, list[bytes]]:
@@ -98,6 +110,8 @@ def build(rom_path: str) -> tuple[dict, list[bytes]]:
     chars = []
     for c in characters(rom):
         ch = {"id": c["id"], "name": c["name"]}
+        if (r := reading(c["name"])) is not None:
+            ch["reading"] = r
         code = c["code"]
         if code & 0x8000:
             f = R.face_fields(code)
@@ -139,7 +153,7 @@ def build(rom_path: str) -> tuple[dict, list[bytes]]:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="匯出 kaodata 統一格式資料集 genchou-md")
-    ap.add_argument("--rom", default=R.DEFAULT_ROM, help="roms/ 的 zip 或 .md")
+    ap.add_argument("--rom", default=R.DEFAULT_ROM, help="roms/ 的 zip 或 .md（預設日版）")
     ap.add_argument("--out", required=True, help="輸出目錄")
     args = ap.parse_args()
     meta, blobs = build(args.rom)

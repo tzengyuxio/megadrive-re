@@ -4,10 +4,11 @@ of scenario 1 in ROM, start a new game in MAME and compare the 30 tiles the menu
 Temujin's face (tile $200, the first face slot), palette line 1 and the screenshot (every pixel of a colour
 other than 0, which is transparent) with the decoding.
 
-Codes: the 97 portraits (as person codes 0-0x60; women's codes are drawn as portrait code + 0x39 by $77CC) and
-every composed-face code in the persons, family blocks (with their children) and women.
+Codes: the 97 portraits (as person codes 0-0x60; women's codes are drawn as portrait code + 0x39 by the women's
+face routine, J $7AE6 / U $77CC) and every composed-face code in the persons, family blocks (with their children)
+and women.
 
-Usage: .venv/bin/python genchou/verify_faces.py [--rom ROM] [--codes 0,16,85F8]
+Usage: .venv/bin/python genchou/verify_faces.py [--rom ROM] [--codes 0,16,85F8]   # Japanese (default) or USA ROM
 """
 import argparse
 import os
@@ -20,9 +21,9 @@ import rom as R
 from PIL import Image
 from replay import replay
 
-BOOT = "w1100 start:10 w200"            # title screen, before the press that opens the new-game menu
-STEPS = "start:10 w250"                 # loads scenario 1 ($26250) and draws Temujin ($7752) and Borchu
-TEMUJIN_FACE = R.PERSONS_AT + 22        # slot 0 of block A
+# title screen, before the press that opens the new-game menu (the Japanese title takes Start later)
+BOOT = {"J": "w1600 start:10 w200", "U": "w1100 start:10 w200"}
+STEPS = "start:10 w250"                 # loads scenario 1 (Layout.loader) and draws Temujin and Borchu
 SCREEN_X, SCREEN_Y = 16, 8              # the face's nametable cells (2-6, 1-6) on screen
 
 
@@ -31,7 +32,7 @@ def codes_in_data(rom: bytes) -> list[int]:
     for n in range(R.SCENARIO_COUNT):
         out |= {p["face"] for p in R.persons(rom, n)}
         out |= {p["face"] for f in R.families(rom, n) for p in f["persons"] + f["children"]}
-    out |= {w["face"] for w in R.women(rom)}
+        out |= {w["face"] for w in R.women(rom, n)}
     return sorted(c for c in out if c & 0x8000)
 
 
@@ -41,13 +42,14 @@ def main() -> None:
     ap.add_argument("--codes", help="只驗證這些頭像碼（十六進位，逗號分隔）")
     args = ap.parse_args()
     rom = R.load(args.rom)
+    L = R.layout(rom)
     codes = ([int(x, 16) for x in args.codes.split(",")] if args.codes
              else list(range(R.PORTRAIT_COUNT)) + codes_in_data(rom))
-    at = R.be32(rom, R.SCENARIO_A) + TEMUJIN_FACE
+    at = R.be32(rom, L.scenario_a) + R.PERSONS_AT + L.face_at       # slot 0 of block A
     runs = [{"rom": [(at, c.to_bytes(2, "big"))], "steps": STEPS, "at": 250, "shot": True,
              "read": [("vram", 0x200 * 32, R.FACE_BYTES), ("cram", 32, 32)]} for c in codes]
-    results = replay(args.rom, BOOT, runs)
-    palette = rom[R.FACE_PALETTE:R.FACE_PALETTE + 32]
+    results = replay(args.rom, BOOT[L.region], runs)
+    palette = rom[L.face_palette:L.face_palette + 32]
     bad = []
     for c, res in zip(codes, results):
         tiles, cram = res["read"]

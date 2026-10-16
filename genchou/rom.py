@@ -1,67 +1,138 @@
-"""MD Genghis Khan II - Clan of the Gray Wolf (KOEI, 1993; 蒼き狼と白き牝鹿・元朝秘史, USA) ROM decoding.
+"""MD 蒼き狼と白き牝鹿・元朝秘史 (KOEI, 1993) ROM decoding: the Japanese version and the USA one, Genghis Khan II -
+Clan of the Gray Wolf.
 
 Offsets are ROM offsets (= 68000 addresses). See docs/ROM_FORMAT.md. The program is compiled C: arguments on the
-stack, memmove at $51F4 (src, dst, n), the decompressor at $33F0 (dst, src). The tables follow the SFC version
-(superfamicom-re/genchou) with 68000 pointers and big-endian numbers; field meanings follow it unless noted.
+stack, memmove (src, dst, n) at $520A (J) / $51F4 (U), the decompressor (dst, src) at $8D90 / $33F0. The two
+versions run the same program with different addresses and record layouts (LAYOUTS, chosen by the header serial
+at 0x180): the Japanese records keep the SFC version's 16-byte names (superfamicom-re/genchou) and its women table
+in block B; the USA ones shorten the names to 13 bytes and share one women table. Field meanings follow the SFC
+version unless noted.
 """
 import os
 import sys
+import unicodedata
+from dataclasses import dataclass
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(REPO, "tools"))
 from triage import load_rom
 
-DEFAULT_ROM = os.path.join(REPO, "roms", "Genghis Khan II - Clan of the Gray Wolf (USA).zip")
+DEFAULT_ROM = os.path.join(REPO, "roms", "Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan).zip")
+USA_ROM = os.path.join(REPO, "roms", "Genghis Khan II - Clan of the Gray Wolf (USA).zip")
 
-# Text is ASCII, 0-terminated. The 8x16 font ($40 + 2 * (c - $20) in VRAM) draws some punctuation as roman
+
+@dataclass(frozen=True)
+class Layout:
+    region: str                          # "J" / "U"
+    serial: bytes                        # header 0x180
+    # scenario loader (D2 = scenario) and where it returns; see SCENARIO_COUNT below
+    loader: int
+    loader_end: int
+    scenario_a: int                      # 4 pointers: block A -> $FF0000
+    scenario_b: int                      # 4 pointers: block B -> b_ram
+    a_size: int
+    b_ram: int
+    b_size: int
+    year_at: int                         # in block B, BE16
+    # persons: name, then house, country, 体力, 戦闘/政治, 魅力/指揮, 年齢, culture bits, status (name_len + 0..7)
+    person_size: int
+    name_len: int
+    face_at: int                         # BE16
+    countries_at: int
+    houses_at: int
+    house_size: int
+    house_name: int                      # name bytes; then first country, king (RAM pointers)
+    house_woman: int | None              # ROM pointer to the woman (USA only)
+    house_culture: int
+    # the player's family blocks: FAMILIES[6 * scenario + k] (0 = none) for house FAMILY_HOUSES[...]; 8 person
+    # slots, then the children (name, then 4 unknown bytes, the face code)
+    families: int
+    family_houses: int
+    family_size: int
+    family_ram: int                      # the loader copies the first 2 blocks of scenario 1 here
+    children_at: int
+    child_size: int
+    child_name: int
+    child_face: int
+    child_slots: int
+    # women: (J) per scenario, up to 32 slots at block B +0; (U) one table at women_table
+    women_table: int | None
+    women_slots: int
+    woman_size: int
+    woman_name: int
+    woman_country: int
+    woman_face: int
+    place_names: int                     # 2 x 33 names (Mongolia, world)
+    place_len: int
+    place_ram: int
+    place_x: int                         # 2 x (33 x, 33 y) bytes, 0x42 apart: label positions on the map
+    label_ram: int                       # x at label_ram, y at label_ram + 0x22
+    # faces
+    portraits: int
+    face_palette: int
+    head_layout: int                     # 8 groups x 7 heads x word: layout number
+    face_layouts: int                    # 22 layouts x 5 parts x (first tile, tile count) words
+    part_tiles: int                      # 8 groups x 7 heads x 2 versions x 5 parts x long pointer (raw tiles)
+
+
+LAYOUTS = {
+    "J": Layout(
+        region="J", serial=b"GM T-76103", loader=0x276FC, loader_end=0x2783E,
+        scenario_a=0x63A44, scenario_b=0x63A54, a_size=0x1564, b_ram=0x1808, b_size=0x553, year_at=0x54E,
+        person_size=26, name_len=16, face_at=24, countries_at=0xB14, houses_at=0x11C8, house_size=28, house_name=18,
+        house_woman=None, house_culture=26,
+        families=0x639E4, family_houses=0x6394A, family_size=0x152, family_ram=0x1564, children_at=0xD0,
+        child_size=22, child_name=16, child_face=20, child_slots=5,
+        women_table=None, women_slots=32, woman_size=22, woman_name=15, woman_country=18, woman_face=20,
+        place_names=0x60C72, place_len=16, place_ram=0x8568, place_x=0x60BEE, label_ram=0x1D62,
+        portraits=0x9F11A, face_palette=0x5F63E, head_layout=0x5F08C, face_layouts=0x5F0FC, part_tiles=0x5F6C6),
+    "U": Layout(
+        region="U", serial=b"GM T-76066", loader=0x26250, loader_end=0x26384,
+        scenario_a=0x4B944, scenario_b=0x4B954, a_size=0x1592, b_ram=0x1826, b_size=0x27D, year_at=0x278,
+        person_size=24, name_len=13, face_at=22, countries_at=0xA3A, houses_at=0x10EE, house_size=36, house_name=22,
+        house_woman=30, house_culture=34,
+        families=0x4B8E4, family_houses=0x4B848, family_size=0x138, family_ram=0x1592, children_at=0xC0,
+        child_size=20, child_name=13, child_face=18, child_slots=6,
+        women_table=0x4562C, women_slots=20, woman_size=18, woman_name=13, woman_country=15, woman_face=16,
+        place_names=0x48DD2, place_len=15, place_ram=0x8114, place_x=0x48D4E, label_ram=0x1AAA,
+        portraits=0x7D272, face_palette=0x475DA, head_layout=0x46E74, face_layouts=0x46EE4, part_tiles=0x47662),
+}
+
+# Scenarios: 4 (the 4th, 1185, is not in the menu: after scenario 1's Mongolia is unified the game continues
+# with it). The loader copies block A (2 bytes, persons, countries, houses) to $FF0000, block B (J: the women,
+# running state and the start year; U: running state and the start year) to b_ram, the first two family blocks
+# of scenario 1 to family_ram, the place names of the map (Mongolia for scenario 1, else the world) to place_ram
+# and the label positions to label_ram.
+SCENARIO_COUNT = 4
+PERSONS_AT, PERSON_SLOTS = 2, 109
+COUNTRY_SIZE, COUNTRY_SLOTS = 52, 33
+HOUSE_SLOTS = 33
+# After copying scenario 4 the loader empties person slot 69 (status = 0x80), as in the SFC version
+LOADER_EMPTIES = {3: [69]}
+FAMILY_SLOTS = 8
+MONGOL_COUNTRIES = 14
+
+# USA text is ASCII, 0-terminated. The 8x16 font ($40 + 2 * (c - $20) in VRAM) draws some punctuation as roman
 # numerals: '{|' is VIII and '}~' is IV.
 GLYPHS = {"$": "I", "\\": "II", "^": "III", "@": "V", "=": "X", "{": "V", "|": "III", "}": "IV", "~": ""}
 
-# Scenarios: 4 (the 4th, "World Conquest" 1185, is not in the menu: after scenario 1's Mongolia is unified the
-# game continues with it). The loader at $26250 (D2 = scenario) copies
-#   block A [SCENARIO_A + 4n] -> $FF0000, 0x1592 bytes: 2 bytes, persons, countries, houses
-#   block B [SCENARIO_B + 4n] -> $FF1826, 0x27D bytes: running state (zero in ROM) and the start year
-#   FAMILIES[0]               -> $FF1592, 0x270 bytes (the first two family blocks of scenario 1)
-#   PLACE_NAMES[world]        -> $FF8114, 0x1EF; PLACE_X / PLACE_Y [world] -> $FF1AAA / $FF1ACC, 0x21 each
-SCENARIO_COUNT = 4
-SCENARIO_A = 0x4B944
-SCENARIO_B = 0x4B954
-A_SIZE, B_SIZE = 0x1592, 0x27D
-PERSONS_AT, PERSON_SIZE, PERSON_SLOTS = 2, 24, 109
-COUNTRIES_AT, COUNTRY_SIZE, COUNTRY_SLOTS = 0xA3A, 52, 33
-HOUSES_AT, HOUSE_SIZE, HOUSE_SLOTS = 0x10EE, 36, 33
-YEAR_AT = 0x278                          # in block B, BE16
-# After copying scenario 4 the loader empties person slot 69 (status = 0x80, $262F4), as in the SFC version
-LOADER_EMPTIES = {3: [69]}
-# The player's family: FAMILIES[6 * scenario + k] (0 = none) is a 0x138-byte block for house FAMILY_HOUSES[...]:
-# 8 person slots, then from +0xC0 the children, 20-byte records (name, 7 bytes not decoded; +13 is probably the
-# age: Joti 2 in 1184, 24 in 1206). $26202 copies the chosen house's block to $FF1592 when a game starts.
-FAMILIES = 0x4B8E4
-FAMILY_HOUSES = 0x4B848
-FAMILY_SLOTS = 8
-CHILDREN_AT, CHILD_SIZE, CHILD_SLOTS = 0xC0, 20, 6
-WOMAN_SIZE = 18                          # houses point at their woman (+30); the women records are at WOMEN
-WOMEN, WOMEN_COUNT = 0x4562C, 20
-MONGOL_COUNTRIES = 14
-PLACE_NAMES = 0x48DD2                    # 2 x 33 x 15 bytes (Mongolia, world)
-PLACE_X, PLACE_Y = 0x48D4E, 0x48D6F      # 2 x (33 x, 33 y) bytes, 0x42 apart: label positions on the map
-
-# Faces: 40x48 = 5x6 4bpp tiles row-major (960 bytes), drawn by $7752 (persons) / $77CC (women). Code bit 15
-# clear: portrait n = code (women: code + WOMAN_PORTRAIT), PORTRAITS[n] is a compressed 960-byte image ($7700).
-# Bit 15 set: composed face ($73FE), see face_tiles. Both use palette line 1 = FACE_PALETTE.
+# Faces: 40x48 = 5x6 4bpp tiles row-major (960 bytes), drawn by J $7A6C / U $7752 (persons) and J $7AE6 / U $77CC
+# (women). Code bit 15 clear and
+# <= 0x62: portrait n = code (women: code + WOMAN_PORTRAIT), a compressed 960-byte image. Bit 15 set: composed face,
+# see face_tiles. Both use palette line 1 = face_palette. Both versions have the same portraits and parts.
 FACE_W, FACE_H = 5, 6
 FACE_BYTES = 960
-PORTRAITS, PORTRAIT_COUNT = 0x7D272, 97
+PORTRAIT_COUNT = 97
 WOMAN_PORTRAIT = 0x39
-FACE_PALETTE = 0x475DA                   # 16 MD colours
-HEAD_LAYOUT = 0x46E74                    # 8 groups x 7 heads x word: layout number
-LAYOUTS = 0x46EE4                        # 22 layouts x 5 parts x (first tile, tile count) words
-PART_TILES = 0x47662                     # 8 groups x 7 heads x 2 versions x 5 parts x long pointer (raw tiles)
 PART_NAMES = ["eyes", "nose", "mouth", "top", "body"]
-PART_BITS = [6, 5, 4, 8, 7]              # code bit choosing version 1 of each part ($7372 fields 0-4)
-DRAW_ORDER = [3, 4, 0, 1, 2]             # $73FE copies top, body, eyes, nose, mouth
+PART_BITS = [6, 5, 4, 8, 7]              # code bit choosing version 1 of each part (fields 0-4)
+DRAW_ORDER = [3, 4, 0, 1, 2]             # the composer copies top, body, eyes, nose, mouth
 MD_LEVELS = (0, 52, 87, 116, 144, 172, 206, 255)  # MAME's levels of the 3-bit MD colour values
+
+
+def layout(rom: bytes) -> Layout:
+    return next(lay for lay in LAYOUTS.values() if rom[0x180:0x180 + len(lay.serial)] == lay.serial)
 
 
 def load(path: str = DEFAULT_ROM) -> bytes:
@@ -77,8 +148,28 @@ def be32(b: bytes, a: int) -> int:
 
 
 def text(b: bytes) -> str:
-    s = b.split(b"\0")[0].decode("latin-1")
-    return "".join(GLYPHS.get(c, c) for c in s)
+    """USA: ASCII with roman-numeral glyphs. Japanese: Shift-JIS; ESC K switches to half-width katakana (JIS X 0201,
+    shown as full-width here) until ESC H, where '-' is the long vowel ー. Kanji (SJIS lead bytes) can appear in
+    either mode."""
+    if b"\x1b" not in b and all(c < 0x80 for c in b.split(b"\0")[0]):
+        s = b.split(b"\0")[0].decode("latin-1")
+        return "".join(GLYPHS.get(c, c) for c in s)
+    out, kana, i = [], False, 0
+    while i < len(b) and b[i]:
+        c = b[i]
+        if c == 0x1B:
+            kana = b[i + 1] == 0x4B
+            i += 2
+        elif 0x81 <= c <= 0x9F or 0xE0 <= c <= 0xEF:
+            out.append(b[i:i + 2].decode("shift_jis"))
+            i += 2
+        elif 0xA1 <= c <= 0xDF:
+            out.append(unicodedata.normalize("NFKC", bytes([c]).decode("shift_jis")))
+            i += 1
+        else:
+            out.append("ー" if kana and c == 0x2D else chr(c))
+            i += 1
+    return unicodedata.normalize("NFC", "".join(out))    # half-width ﾞ ﾟ become combining marks: compose them
 
 
 def md_rgb(w: int) -> tuple[int, int, int]:
@@ -88,75 +179,81 @@ def md_rgb(w: int) -> tuple[int, int, int]:
 # --- scenarios ---------------------------------------------------------------------------------------------
 
 def block_a(rom: bytes, n: int) -> bytes:
-    a = be32(rom, SCENARIO_A + 4 * n)
-    return rom[a:a + A_SIZE]
+    L = layout(rom)
+    a = be32(rom, L.scenario_a + 4 * n)
+    return rom[a:a + L.a_size]
 
 
 def block_b(rom: bytes, n: int) -> bytes:
-    a = be32(rom, SCENARIO_B + 4 * n)
-    return rom[a:a + B_SIZE]
+    L = layout(rom)
+    a = be32(rom, L.scenario_b + 4 * n)
+    return rom[a:a + L.b_size]
 
 
 def year(rom: bytes, n: int) -> int:
-    return be16(block_b(rom, n), YEAR_AT)
+    return be16(block_b(rom, n), layout(rom).year_at)
 
 
-def person(rec: bytes) -> dict:
-    """24-byte person record (SFC +16.. shifted to +13..)."""
+def person(rec: bytes, L: Layout) -> dict:
+    """Person record: name, then the SFC version's +16.. fields (USA: from +13, with a 0 byte before the face)."""
+    o = L.name_len
     return {
-        "name": text(rec[:13]),
-        "house": rec[13],                # 0xFF = none
-        "country": rec[14],
-        "hp": rec[15] >> 4, "hp_max": rec[15] & 15,
-        "war": rec[16] >> 4, "pol": rec[16] & 15,      # 0-4 = E-A
-        "cha": rec[17] >> 4, "lead": rec[17] & 15,
-        "age": rec[18] - 256 if rec[18] > 127 else rec[18],
-        "culture": rec[19] >> 2 & 7,     # bits 2-4 (SFC +22; inferred)
-        "flags": rec[19] & 0xE3,
-        "status": rec[20],               # 3 = king, 0x80 = empty slot
-        "b21": rec[21],
-        "face": be16(rec, 22),
+        "name": text(rec[:o]),
+        "house": rec[o],                 # 0xFF = none
+        "country": rec[o + 1],
+        "hp": rec[o + 2] >> 4, "hp_max": rec[o + 2] & 15,
+        "war": rec[o + 3] >> 4, "pol": rec[o + 3] & 15,      # 0-4 = E-A
+        "cha": rec[o + 4] >> 4, "lead": rec[o + 4] & 15,
+        "age": rec[o + 5] - 256 if rec[o + 5] > 127 else rec[o + 5],
+        "culture": rec[o + 6] >> 2 & 7,  # bits 2-4 (SFC +22; inferred)
+        "flags": rec[o + 6] & 0xE3,
+        "status": rec[o + 7],            # 3 = king, 0x80 = empty slot
+        "face": be16(rec, L.face_at),
     }
 
 
 def persons(rom: bytes, n: int) -> list[dict]:
     """Used person slots of scenario n, with their slot number."""
+    L = layout(rom)
     a = block_a(rom, n)
     out = []
     for k in range(PERSON_SLOTS):
-        rec = a[PERSONS_AT + PERSON_SIZE * k:PERSONS_AT + PERSON_SIZE * (k + 1)]
-        if rec[20] != 0x80 and rec[0] and k not in LOADER_EMPTIES.get(n, []):
-            out.append({"slot": k, **person(rec)})
+        rec = a[PERSONS_AT + L.person_size * k:PERSONS_AT + L.person_size * (k + 1)]
+        if rec[L.name_len + 7] != 0x80 and rec[0] and k not in LOADER_EMPTIES.get(n, []):
+            out.append({"slot": k, **person(rec, L)})
     return out
 
 
 def families(rom: bytes, n: int) -> list[dict]:
     """The family blocks of scenario n: {house, persons, children} for each house the player can choose."""
+    L = layout(rom)
     out = []
     for k in range(6):
-        p = be32(rom, FAMILIES + 24 * n + 4 * k)
+        p = be32(rom, L.families + 24 * n + 4 * k)
         if not p:
             continue
         rows = []
         for j in range(FAMILY_SLOTS):
-            rec = rom[p + PERSON_SIZE * j:p + PERSON_SIZE * (j + 1)]
-            if rec[0] and rec[20] != 0x80:
-                rows.append({"slot": j, **person(rec)})
+            rec = rom[p + L.person_size * j:p + L.person_size * (j + 1)]
+            if rec[0] and rec[L.name_len + 7] != 0x80:
+                rows.append({"slot": j, **person(rec, L)})
         kids = []
-        for j in range(CHILD_SLOTS):
-            rec = rom[p + CHILDREN_AT + CHILD_SIZE * j:p + CHILDREN_AT + CHILD_SIZE * (j + 1)]
+        for j in range(L.child_slots):
+            rec = rom[p + L.children_at + L.child_size * j:p + L.children_at + L.child_size * (j + 1)]
             if not rec[0]:
                 break
-            kids.append({"name": text(rec[:13]), "raw": rec[13:].hex(" "), "face": be16(rec, 18)})
-        out.append({"house": rom[FAMILY_HOUSES + 6 * n + k], "address": p, "persons": rows, "children": kids})
+            kids.append({"name": text(rec[:L.child_name]), "raw": rec[L.child_name:].hex(" "),
+                         "face": be16(rec, L.child_face)})
+        out.append({"house": rom[L.family_houses + 6 * n + k], "address": p, "persons": rows, "children": kids})
     return out
 
 
 def countries(rom: bytes, n: int) -> list[dict]:
+    L = layout(rom)
     a = block_a(rom, n)
     out = []
     for k in range(MONGOL_COUNTRIES if n == 0 else COUNTRY_SLOTS):
-        r = a[COUNTRIES_AT + COUNTRY_SIZE * k:COUNTRIES_AT + COUNTRY_SIZE * (k + 1)]
+        r = a[L.countries_at + COUNTRY_SIZE * k:L.countries_at + COUNTRY_SIZE * (k + 1)]
         out.append({
             "id": k,
             "b0": be32(r, 0),             # 0 in ROM
@@ -173,40 +270,51 @@ def countries(rom: bytes, n: int) -> list[dict]:
 
 
 def houses(rom: bytes, n: int) -> list[dict]:
+    L = layout(rom)
     a = block_a(rom, n)
     out = []
     for k in range(HOUSE_SLOTS):
-        r = a[HOUSES_AT + HOUSE_SIZE * k:HOUSES_AT + HOUSE_SIZE * (k + 1)]
+        r = a[L.houses_at + L.house_size * k:L.houses_at + L.house_size * (k + 1)]
         if not r[0]:
             continue
-        first, king, woman = be32(r, 22), be32(r, 26), be32(r, 30)
+        o = L.house_name
+        first, king = be32(r, o), be32(r, o + 4)
+        woman = be32(r, L.house_woman) if L.house_woman else 0
         out.append({
-            "id": k, "name": text(r[:22]),
-            "first_country": (first - 0xFF0000 - COUNTRIES_AT) // COUNTRY_SIZE if first else None,
-            "king": (king - 0xFF0000 - PERSONS_AT) // PERSON_SIZE if king else None,
-            "woman": (woman - WOMEN) // WOMAN_SIZE if woman else None,
-            "culture": r[34], "b35": r[35],
+            "id": k, "name": text(r[:o]),
+            "first_country": (first - 0xFF0000 - L.countries_at) // COUNTRY_SIZE if first else None,
+            "king": (king - 0xFF0000 - PERSONS_AT) // L.person_size if king else None,
+            "woman": (woman - L.women_table) // L.woman_size if woman else None,
+            "culture": r[L.house_culture], "b35": r[L.house_culture + 1],
         })
     return out
 
 
-def women(rom: bytes) -> list[dict]:
+def women(rom: bytes, n: int = 0) -> list[dict]:
+    """The women of scenario n (Japanese: block B, up to the first empty name; USA: one table for all scenarios).
+    Fields between the name and the country are not decoded (SFC: +15 FF, +16, +17)."""
+    L = layout(rom)
+    base = L.women_table if L.women_table else be32(rom, L.scenario_b + 4 * n)
     out = []
-    for k in range(WOMEN_COUNT):
-        r = rom[WOMEN + WOMAN_SIZE * k:WOMEN + WOMAN_SIZE * (k + 1)]
-        out.append({"id": k, "name": text(r[:13]), "b13": r[13], "b14": r[14], "country": r[15],
-                    "face": be16(r, 16)})
+    for k in range(L.women_slots):
+        r = rom[base + L.woman_size * k:base + L.woman_size * (k + 1)]
+        if not r[0]:
+            break
+        out.append({"id": k, "name": text(r[:L.woman_name]), "raw": r[L.woman_name:L.woman_country].hex(" "),
+                    "country": r[L.woman_country], "face": be16(r, L.woman_face)})
     return out
 
 
 def place_names(rom: bytes, world: bool) -> list[str]:
-    a = PLACE_NAMES + 0x1EF * world
-    return [text(rom[a + 15 * k:a + 15 * k + 15]) for k in range(33)]
+    L = layout(rom)
+    a = L.place_names + 33 * L.place_len * world
+    return [text(rom[a + L.place_len * k:a + L.place_len * (k + 1)]) for k in range(33)]
 
 
 def place_pos(rom: bytes, world: bool) -> list[tuple[int, int]]:
-    x, y = PLACE_X + 0x42 * world, PLACE_Y + 0x42 * world
-    return [(rom[x + k], rom[y + k]) for k in range(33)]
+    L = layout(rom)
+    x = L.place_x + 0x42 * world
+    return [(rom[x + k], rom[x + 0x21 + k]) for k in range(33)]
 
 
 # --- faces -------------------------------------------------------------------------------------------------
@@ -215,9 +323,9 @@ _MASK = [(1 << k) - 1 for k in range(17)]
 
 
 def decompress(rom: bytes, src: int) -> bytes:
-    """The decompressor at $33F0: a flag byte per 8 items, MSB first; set = literal byte, clear = copy. The copy
-    length and distance are prefix codes read from a 16-bit window over a bit stream of little-endian words
-    (bit reader $3376); the flag and literal bytes are read from the same pointer between the words."""
+    """The decompressor (J $8D90, U $33F0): a flag byte per 8 items, MSB first; set = literal byte, clear = copy.
+    The copy length and distance are prefix codes read from a 16-bit window over a bit stream of little-endian words
+    (U: bit reader $3376); the flag and literal bytes are read from the same pointer between the words."""
     s = src
     win = buf = avail = 0
 
@@ -284,23 +392,24 @@ def decompress(rom: bytes, src: int) -> bytes:
 
 
 def portrait_tiles(rom: bytes, n: int) -> bytes:
-    return decompress(rom, be32(rom, PORTRAITS + 4 * n))
+    return decompress(rom, be32(rom, layout(rom).portraits + 4 * n))
 
 
 def face_fields(code: int) -> dict:
-    """$7372: group = bits 12-14, head type = bits 9-11 mod 7, part versions from PART_BITS."""
+    """group = bits 12-14, head type = bits 9-11 mod 7, part versions from PART_BITS."""
     g, m = code >> 12 & 7, (code >> 9 & 7) % 7
     return {"group": g, "type": m, "head": 7 * g + m, "variants": [code >> b & 1 for b in PART_BITS]}
 
 
 def head_parts(rom: bytes, head: int) -> list[dict]:
     """The 5 parts of head 7 * group + type: face tiles covered and the two versions' source addresses."""
+    L = layout(rom)
     g, m = divmod(head, 7)
-    lay = be16(rom, HEAD_LAYOUT + 2 * head)
+    lay = be16(rom, L.head_layout + 2 * head)
     out = []
     for k in range(5):
-        first, count = be16(rom, LAYOUTS + 20 * lay + 4 * k), be16(rom, LAYOUTS + 20 * lay + 4 * k + 2)
-        src = [be32(rom, PART_TILES + 0x118 * g + 4 * (v * 5 + m * 10 + k)) for v in range(2)]
+        first, count = be16(rom, L.face_layouts + 20 * lay + 4 * k), be16(rom, L.face_layouts + 20 * lay + 4 * k + 2)
+        src = [be32(rom, L.part_tiles + 0x118 * g + 4 * (v * 5 + m * 10 + k)) for v in range(2)]
         out.append({"name": PART_NAMES[k], "cells": list(range(first, first + count)), "src": src,
                     "layout": lay})
     return out
@@ -334,4 +443,4 @@ def tiles_pixels(tiles: bytes) -> list[int]:
 
 
 def face_palette(rom: bytes) -> list[tuple[int, int, int]]:
-    return [md_rgb(be16(rom, FACE_PALETTE + 2 * i)) for i in range(16)]
+    return [md_rgb(be16(rom, layout(rom).face_palette + 2 * i)) for i in range(16)]
