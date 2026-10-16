@@ -84,7 +84,9 @@ def build(rom_path: str) -> tuple[dict, list[bytes]]:
     for head in range(HEADS):
         parts = {p["name"]: {"items": [add(cells_image(rom, src, p["cells"])) for src in p["src"]]}
                  for p in R.head_parts(rom, head)}
-        variants.append({"id": str(head), "label": f"{FACE_GROUPS[head // 7]}(推測) {head % 7}",
+        kind = head % 7  # types 0-4 are men, 5-6 women (as in the FC version)
+        sex = f"男 {kind}" if kind < 5 else f"女 {kind - 5}"
+        variants.append({"id": str(head), "label": f"{FACE_GROUPS[head // 7]}(推測)／{sex}",
                          "parts": {s: parts[s] for s in slots}})
 
     portraits = []
