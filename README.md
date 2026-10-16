@@ -13,8 +13,13 @@ MD／Genesis 歷史策略遊戲（非光榮為主，例如三國志列傳）的 
 | [san2](san2/) | 三國志II | KOEI 1991 | 6 劇本、人物、州、頭像（專屬＋組合臉）、大地圖、戰場 41 張；kaodata `san2-md` |
 | [san3](san3/) | 三國志III | KOEI 1992 | 劇本、人物、州、勢力、寶物、頭像（一般＋合成）、大地圖、戰場資料；kaodata `san3-md` |
 | [zenkoku](zenkoku/) | 信長の野望・全国版（＋美版 Nobunaga's Ambition） | KOEI 1993 | 4 劇本、大名、國、頭像、大地圖（含開局上色）、戰場地形；kaodata `nobu2-md` |
-| [genchou](genchou/) | Genghis Khan II（元朝秘史美版） | KOEI 1993 | 人物、國、王家、女性、頭像（專屬＋組合臉）；kaodata `genchou-md` |
+| [genchou](genchou/) | 蒼き狼と白き牝鹿・元朝秘史（＋美版 Genghis Khan II） | KOEI 1993 | 人物、國、王家、女性、子女、頭像（專屬＋組合臉）；kaodata `genchou-md`（日版） |
 | [haouden](haouden/) | 信長の野望・覇王伝 | KOEI 1993 | 劇本、人物、城、大名、頭像（專屬＋組合臉）；kaodata `nobu5-md`；地圖未做 |
+| [daikoukai](daikoukai/) | 大航海時代 | KOEI 1992 | 人物、港口、國家、名稱表、頭像（專屬＋組合臉）、世界地圖；kaodata `koukai-md`；港町圖未做 |
+| [royal](royal/) | ロイヤルブラッド | KOEI 1992 | 4 劇本、人物、家、領地、部隊、頭像（人物＋相談役＋部隊）、戰略地圖、戰場地形；kaodata `royal-md` |
+| [teitoku](teitoku/) | 提督の決断 | KOEI 1992 | 9 劇本、提督、艦船、基地、艦隊、頭像、世界地圖；kaodata `tk-md`；作戰大地圖未解 |
+| [airmanage](airmanage/) | エアーマネジメント・大空に賭ける | KOEI 1992 | 2 劇本、都市、距離、機種、製造商、頭像（部下＋交涉對象＋廠商）、大地圖；kaodata `air-md` |
+| [europe](europe/) | ヨーロッパ戦線 | KOEI 1993 | 6 劇本、將領、領袖、都市、兵器、頭像、戰場地形；kaodata `europe-md`；戰場畫面未解 |
 | [sgz5](sgz5/) | San Guo Zhi V（中國盜版，三國志V 移植改作） | — | 7 劇本、人物、城、勢力、寶物、頭像、選君主地圖；非光榮正式作品，不出 kaodata |
 
 各遊戲的驗證方式與結果（皆以 MAME 跑遊戲本身的程式）寫在各自的 README。
