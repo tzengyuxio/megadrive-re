@@ -24,11 +24,12 @@ MD／Genesis 歷史策略遊戲的 ROM 逆向工程：解析人物、頭像、�
 | [airmanage2](airmanage2/) | エアーマネジメントII 航空王をめざせ | KOEI 1994 | 4 劇本、都市、機種、事件、頭像（秘書＋職員＋國家代表＋廠商）、世界與地區地圖；kaodata `air2-md` |
 | [daikoukai2](daikoukai2/) | 大航海時代II | KOEI 1994 | 人物、VIP、女性、船種、港、道具、發見物、頭像（專屬＋組合臉）、世界地圖格資料；kaodata `koukai2-md`；地圖圖形未解 |
 | [dokuritsu](dokuritsu/) | Liberty or Death（独立戦争，美國限定） | KOEI 1994 | 劇本、人物、事件人物、地點、州、頭像（專屬＋組合臉）、大地圖、HEX 戰場格資料；kaodata `liberty-md` |
+| [winning](winning/) | ウイニングポスト（Mega-CD 限定） | KOEI 1993 | 調教師、騎手、馬主、頭像（專屬＋組合臉）；kaodata `winning-md`（平台寫 MD，未交）；馬與賽馬資料未做 |
 | [sgz5](sgz5/) | San Guo Zhi V（中國盜版，三國志V 移植改作） | — | 7 劇本、人物、城、勢力、寶物、頭像、選君主地圖；非光榮正式作品，不出 kaodata |
 
-光榮在 MD 上發行的卡帶作品 15 款已全部處理並交給 kaodata（英日版並存者以日版為代表；Liberty or Death 只有美版）。Mega-CD 版（三國志III、ウイニングポスト、元朝秘史、覇王伝）尚未處理。
+光榮在 MD 上發行的卡帶作品 15 款已全部處理並交給 kaodata（英日版並存者以日版為代表；Liberty or Death 只有美版）。Mega-CD 版 4 款都已解析與模擬器驗證，尚未交給 kaodata（四款一起決定）：三國志III、元朝秘史、覇王伝的追加內容以 `addedIn: "CD"` 併進 `san3-md`、`genchou-md`、`nobu5-md`（見各資料夾的 `docs/MEGACD.md`）；ウイニングポスト沒有卡帶版，另出 `winning-md`（平台寫 MD）。
 
-各遊戲的驗證方式與結果（皆以 MAME 跑遊戲本身的程式）寫在各自的 README。
+各遊戲的驗證方式與結果（卡帶版以 MAME、Mega-CD 版以 Genesis Plus GX 跑遊戲本身的程式）寫在各自的 README。
 
 ## 共用工具（`tools/`）
 
@@ -37,6 +38,7 @@ MD／Genesis 歷史策略遊戲的 ROM 逆向工程：解析人物、頭像、�
 | `triage.py` | ROM 分診：MD 表頭、checksum、KOEI LZ 區塊、SJIS 字串 |
 | `koei_lz.py` | KOEI LZ 解壓（取自 superfamicom-re） |
 | `megacd.py` | Mega-CD 映像（Redump .7z）：資料軌 2048-byte 磁區、ISO 9660 檔案列表與讀取，合併成單一 bin/cue 給模擬器 |
+| `gpgx.py` | Genesis Plus GX（libretro core，固定 commit 編在 `.emu/`）的 ctypes 驅動，跑 Mega-CD：按鍵、savestate、副／主 CPU 斷點、PRG-RAM／VRAM／CRAM 讀寫、截圖；`gpgx/probe.c` 是編進 core 的匯出 |
 | `mame.py` | 用 Lua 腳本跑 MAME（背景執行、不搶 focus）：按鍵、截圖、dump RAM／VRAM／CRAM、斷點 |
 | `drive.py` | 按鍵序列語法（`btn[:hold][*n]`、`w<n>`、`@tag`）、dump、記憶體讀取追蹤 |
 | `replay.py` | savestate 重播：開機一次存檔，之後每輪 patch ROM／RAM、截圖或讀記憶體 |
