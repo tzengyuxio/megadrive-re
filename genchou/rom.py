@@ -74,6 +74,8 @@ class Layout:
     head_layout: int                     # 8 groups x 7 heads x word: layout number
     face_layouts: int                    # 22 layouts x 5 parts x (first tile, tile count) words
     part_tiles: int                      # 8 groups x 7 heads x 2 versions x 5 parts x long pointer (raw tiles)
+    loader_empties: dict | None = None   # person slots the loader empties per scenario (None: LOADER_EMPTIES)
+    ram: int = 0xFF0000                  # where block A is loaded (the houses' RAM pointers)
 
 
 LAYOUTS = {
@@ -97,6 +99,20 @@ LAYOUTS = {
         women_table=0x4562C, women_slots=20, woman_size=18, woman_name=13, woman_country=15, woman_face=16,
         place_names=0x48DD2, place_len=15, place_ram=0x8114, place_x=0x48D4E, label_ram=0x1AAA,
         portraits=0x7D272, face_palette=0x475DA, head_layout=0x46E74, face_layouts=0x46EE4, part_tiles=0x47662),
+    # Mega-CD (1993-09-24): addresses in the sub CPU image that cd.load() builds (SMAIN.PRG at $C000, INIT.PRG at
+    # $66000); the records are the Japanese ones, 5 scenarios (cd.SCENARIOS). Faces come from GH2GRP.DAT (cd.py),
+    # so portraits / part_tiles are unused; loader / place_ram / label_ram are not traced.
+    "C": Layout(
+        region="C", serial=b"GM T-76054", loader=0, loader_end=0,
+        scenario_a=0x7B186, scenario_b=0x7B19A, a_size=0x1564, b_ram=0x1808, b_size=0x553, year_at=0x54E,
+        person_size=26, name_len=16, face_at=24, countries_at=0xB14, houses_at=0x11C8, house_size=28, house_name=18,
+        house_woman=None, house_culture=26,
+        families=0x7B10E, family_houses=0x7B064, family_size=0x152, family_ram=0x1564, children_at=0xD0,
+        child_size=22, child_name=16, child_face=20, child_slots=5,
+        women_table=None, women_slots=32, woman_size=22, woman_name=15, woman_country=18, woman_face=20,
+        place_names=0x55D0A, place_len=16, place_ram=0, place_x=0x55C44, label_ram=0,
+        portraits=0, face_palette=0x54D44, head_layout=0x547B2, face_layouts=0x54822, part_tiles=0,
+        loader_empties={4: [69]}, ram=0x7E000),
 }
 
 # Scenarios: 4 (the 4th, 1185, is not in the menu: after scenario 1's Mongolia is unified the game continues
@@ -219,7 +235,8 @@ def persons(rom: bytes, n: int) -> list[dict]:
     out = []
     for k in range(PERSON_SLOTS):
         rec = a[PERSONS_AT + L.person_size * k:PERSONS_AT + L.person_size * (k + 1)]
-        if rec[L.name_len + 7] != 0x80 and rec[0] and k not in LOADER_EMPTIES.get(n, []):
+        empties = LOADER_EMPTIES if L.loader_empties is None else L.loader_empties
+        if rec[L.name_len + 7] != 0x80 and rec[0] and k not in empties.get(n, []):
             out.append({"slot": k, **person(rec, L)})
     return out
 
@@ -282,8 +299,8 @@ def houses(rom: bytes, n: int) -> list[dict]:
         woman = be32(r, L.house_woman) if L.house_woman else 0
         out.append({
             "id": k, "name": text(r[:o]),
-            "first_country": (first - 0xFF0000 - L.countries_at) // COUNTRY_SIZE if first else None,
-            "king": (king - 0xFF0000 - PERSONS_AT) // L.person_size if king else None,
+            "first_country": (first - L.ram - L.countries_at) // COUNTRY_SIZE if first else None,
+            "king": (king - L.ram - PERSONS_AT) // L.person_size if king else None,
             "woman": (woman - L.women_table) // L.woman_size if woman else None,
             "culture": r[L.house_culture], "b35": r[L.house_culture + 1],
         })
