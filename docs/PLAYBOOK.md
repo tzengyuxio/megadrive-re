@@ -59,4 +59,14 @@
 - 光榮的 Mega-CD 作品把卡帶版的資料拆成檔案：`SMAIN.PRG` 跑在副 CPU（PRG-RAM，載入 `$C000`），`INIT.PRG` 等 overlay 載入 `$66000`；頭像改成未壓縮、每張 1,024 bytes 一格（960 bytes tile＋64 bytes 0）的 `ORGKAO.DAT`／`GH2GRP.DAT`，合成臉預先合成好存在同一檔。
 - 拿卡帶版解出來的頭像／記錄在檔案裡搜尋，就能一次定位表格與載入位址。
 - MAME 0.289 的 `megacdj`（preliminary，不支援 savestate）用 v1.00P／v1.11 BIOS 都只停在 BIOS 或 CD 播放器（cue、單一 bin、iso、CHD 都一樣），不能用來驗證。
+- 改用 Genesis Plus GX（`tools/gpgx.py`）：`--build` 從固定 commit 編 libretro core，加上 PC 斷點與記憶體匯出（`tools/gpgx/probe.c`）。踩坑：
+  - BIOS 要 **Mega-CD 2 (J) v2.00**（CRC `dd6cc972`，放 `roms/megacd/bios/`）；v1.00P／G、v1.11 會讀到光碟但還是進 CD 播放器。
+  - 光榮的遊戲要 1 Mbit 的備份 RAM 卡匣（core 選項 `genesis_plus_gx_cart_size`；元朝秘史要 119 blocks），否則開頭就停在「バックアップRAMカートリッジが初期化されていません」。
+  - core 用 `RETRO_DEVICE_ID_JOYPAD_MASK`（id 256）一次讀整個手把；光榮的 CD 遊戲讀手把很慢，按鍵要按住 30–60 幀，方向鍵按太久會連發（選單用 20 幀）。
+  - core 的記憶體是主機序的 16-bit word（讀寫要交換 byte）；CRAM 存成 9-bit `BBBGGGRRR`。
+  - 速度很快（元朝秘史開機到主選單、每輪 load savestate 再開局約 0.3 秒），驗證比卡帶版的 MAME 腳本快。
+  - 選單游標有時看不出來（ウイニングポスト的主選單），按太久的方向鍵沒有反應；短按 8 幀再按 C 才選得到。
+  - 斷點回呼收到的是 `Emu`（`fn(emu)`），引數在副 CPU 的堆疊（`reg(1, 'SP')` 起，PRG-RAM）；在函式入口改堆疊上的引數，就能讓遊戲自己的程式畫任何臉（ウイニングポスト的 `$18C6A`）。
+  - 一開始取樣 PC 常落在 BIOS 的待機迴圈（副 CPU `$6196`、主 CPU 在 work RAM），不代表遊戲程式不在副 CPU；在疑似的函式設斷點計數比較準。
+- 副 CPU 的程式直接讀 PRG-RAM 裡的資料：把要測的值寫進 PRG-RAM 的原始記錄（`Emu.write_prg_ram`）再開局即可，和卡帶版寫 ROM 的做法一樣。
 

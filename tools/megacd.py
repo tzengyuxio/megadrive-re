@@ -6,6 +6,7 @@ roms/megacd/.cache/ as a plain 2048-byte-sector .iso, and cue() unpacks the bin/
 Usage: .venv/bin/python tools/megacd.py IMAGE [--extract DIR]    # list the files (and copy them to DIR)
 """
 import argparse
+import hashlib
 import os
 import subprocess
 
@@ -51,13 +52,24 @@ def cue(path: str) -> str:
     return single
 
 
+def track01(path: str) -> tuple[str, bytes]:
+    """Track 01's file name in the archive and its raw 2352-byte sectors."""
+    names = subprocess.run(["bsdtar", "-tf", path], capture_output=True, text=True, check=True).stdout.split("\n")
+    name = next(n for n in names if n.endswith("(Track 01).bin"))
+    return name, subprocess.run(["bsdtar", "-xOf", path, name], capture_output=True, check=True).stdout
+
+
+def track01_sha1(path: str) -> tuple[str, str]:
+    """Track 01's file name and SHA-1 (as Redump lists them), e.g. for a dataset's source.inputs."""
+    name, raw = track01(path)
+    return name, hashlib.sha1(raw).hexdigest()
+
+
 def data_track(path: str) -> bytes:
     """User data (2048 bytes per sector) of Track 01."""
     iso = os.path.join(CACHE, os.path.splitext(os.path.basename(path))[0] + ".iso")
     if not os.path.exists(iso):
-        names = subprocess.run(["bsdtar", "-tf", path], capture_output=True, text=True, check=True).stdout.split("\n")
-        raw = subprocess.run(["bsdtar", "-xOf", path, next(n for n in names if n.endswith("(Track 01).bin"))],
-                             capture_output=True, check=True).stdout
+        _, raw = track01(path)
         assert len(raw) % 2352 == 0 and raw[15] == 1, "Track 01 is not MODE1/2352"
         os.makedirs(CACHE, exist_ok=True)
         with open(iso, "wb") as f:
