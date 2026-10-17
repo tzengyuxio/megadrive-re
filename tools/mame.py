@@ -18,16 +18,24 @@ Prelude API (Lua):
   SP:install_read_tap / install_write_tap   keep the returned handle in a global, or it is garbage-collected
                             and the tap stops
   quit()
+  Mega-CD (run() on a .7z/.cue image): SUB / SUBSP are the sub CPU (PRG-RAM at $000000); srd8/16/32, swr8/16
 
 The ROM is extracted from its zip into a temp folder, which is deleted afterwards. MAME needs no BIOS for
-megadrij / genesis.
+megadrij / genesis. Mega-CD images run on megacdj with the v1.11 BIOS from roms/megacd/bios/megacdj.zip and the
+bin/cue that tools/megacd.py unpacks; MAME 0.289's megacdj (preliminary) only reaches the BIOS / CD player with the
+KOEI discs, so it cannot verify them.
 """
 import os
 import subprocess
+import sys
 import tempfile
 import zipfile
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import megacd
+
 SYSTEM = {"J": "megadrij", "U": "genesis", "E": "megadriv"}
+CD_BIOS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "roms", "megacd", "bios")
 
 PRELUDE = r"""
 local M=manager.machine
@@ -40,6 +48,13 @@ local PAD=M.ioport.ports[":ctrl1:mdpad:PAD"]
 local BTN={a="P1 A", b="P1 B", c="P1 C", start="P1 Start", up="P1 Up", down="P1 Down", left="P1 Left",
            right="P1 Right"}
 local ROM=M.memory.regions[":mdslot:cart:rom"]
+SUB=M.devices[":segacd:segacd_68k"]
+SUBSP=SUB and SUB.spaces["program"]
+function srd8(a) return SUBSP:read_u8(a) end
+function srd16(a) return SUBSP:read_u16(a) end
+function srd32(a) return SUBSP:read_u32(a) end
+function swr8(a, v) SUBSP:write_u8(a, v) end
+function swr16(a, v) SUBSP:write_u16(a, v) end
 local _f=0
 local _frame_fns={}
 local _exec={}
@@ -118,14 +133,19 @@ def system_for(rom: bytes) -> str:
 def run(rom_path: str, lua: str, debug: bool = False, timeout: float = 3600, system: str | None = None) -> str:
     """Run MAME on the ROM with PRELUDE + lua until the script calls quit(); return stdout."""
     with tempfile.TemporaryDirectory() as tmp:
-        rom = extract(rom_path, tmp)
-        if system is None:
-            with open(rom, "rb") as fh:
-                system = system_for(fh.read(0x200))
+        if megacd.is_image(rom_path):
+            media = ["-cdrom", megacd.cue(rom_path), "-bios", "v111", "-rompath", CD_BIOS]
+            system = system or "megacdj"
+        else:
+            rom = extract(rom_path, tmp)
+            media = ["-cart", rom]
+            if system is None:
+                with open(rom, "rb") as fh:
+                    system = system_for(fh.read(0x200))
         script = os.path.join(tmp, "run.lua")
         with open(script, "w") as fh:
             fh.write(PRELUDE + lua)
-        cmd = ["mame", system, "-cart", rom, "-video", "none", "-sound", "none", "-nothrottle", "-skip_gameinfo",
+        cmd = ["mame", system, *media, "-video", "none", "-sound", "none", "-nothrottle", "-skip_gameinfo",
                "-nvram_directory", os.path.join(tmp, "nvram"), "-cfg_directory", os.path.join(tmp, "cfg"),
                "-state_directory", os.path.join(tmp, "sta"), "-snapshot_directory", tmp,
                "-keyboardprovider", "none", "-mouseprovider", "none", "-joystickprovider", "none",

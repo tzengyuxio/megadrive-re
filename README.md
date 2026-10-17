@@ -36,6 +36,7 @@ MD／Genesis 歷史策略遊戲的 ROM 逆向工程：解析人物、頭像、�
 |------|------|
 | `triage.py` | ROM 分診：MD 表頭、checksum、KOEI LZ 區塊、SJIS 字串 |
 | `koei_lz.py` | KOEI LZ 解壓（取自 superfamicom-re） |
+| `megacd.py` | Mega-CD 映像（Redump .7z）：資料軌 2048-byte 磁區、ISO 9660 檔案列表與讀取，合併成單一 bin/cue 給模擬器 |
 | `mame.py` | 用 Lua 腳本跑 MAME（背景執行、不搶 focus）：按鍵、截圖、dump RAM／VRAM／CRAM、斷點 |
 | `drive.py` | 按鍵序列語法（`btn[:hold][*n]`、`w<n>`、`@tag`）、dump、記憶體讀取追蹤 |
 | `replay.py` | savestate 重播：開機一次存檔，之後每輪 patch ROM／RAM、截圖或讀記憶體 |

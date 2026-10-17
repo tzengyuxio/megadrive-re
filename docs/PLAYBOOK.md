@@ -52,3 +52,11 @@
 - `name` 照 ROM 原文（錯字照錄），史書寫法放 `nameHistorical`；`reading` 只在 ROM 有讀音時給，全形平假名、姓名之間空一格。外部來源的人名不放進資料集。
 - 同一人的其他樣貌放 `expressions`，`tools/kaodata.checksums` 會一併算 `ch:<id>/<k>`。
 - 沒有人物使用但有意義的頭像加 `group`（如「姫」「事件人物」），名字要有 ROM 依據才給 `name`。
+
+## Mega-CD
+
+- 映像放 `roms/megacd/`（檔名和卡帶版重複），`tools/megacd.py` 讀 Redump .7z 的資料軌（Track 01 MODE1/2352）與 ISO 9660 檔案；快取在 `roms/megacd/.cache/`。
+- 光榮的 Mega-CD 作品把卡帶版的資料拆成檔案：`SMAIN.PRG` 跑在副 CPU（PRG-RAM，載入 `$C000`），`INIT.PRG` 等 overlay 載入 `$66000`；頭像改成未壓縮、每張 1,024 bytes 一格（960 bytes tile＋64 bytes 0）的 `ORGKAO.DAT`／`GH2GRP.DAT`，合成臉預先合成好存在同一檔。
+- 拿卡帶版解出來的頭像／記錄在檔案裡搜尋，就能一次定位表格與載入位址。
+- MAME 0.289 的 `megacdj`（preliminary，不支援 savestate）用 v1.00P／v1.11 BIOS 都只停在 BIOS 或 CD 播放器（cue、單一 bin、iso、CHD 都一樣），不能用來驗證。
+
