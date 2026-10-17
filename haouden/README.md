@@ -2,31 +2,39 @@
 
 KOEI，1993，MD（ROM 表頭 `(C)T-76 1993.DEC`，`GM T-76153 -00`，2 MB，checksum 正確）。3 個劇本（1551、1568、1582 年），人物 Id 0–819（實際 817 人）、110 城、64 國。文字是 Shift-JIS（長宗我部／香宗我部用 3 個外字碼）。資料結構與 SFC 版（`~/works/superfamicom-re/haouden`）相同，只是指標改成 4 bytes、多了對齊用的空 byte；數值與 SFC Rev 1 完全相同。ROM 結構與各表格式見 [docs/ROM_FORMAT.md](docs/ROM_FORMAT.md)。
 
+Mega-CD 版（1994，多了 1583 年劇本、28 人改用新專屬頭像）見 [docs/MEGACD.md](docs/MEGACD.md)；`cd.py` 讀光碟，沿用 `rom.py` 的解碼器，kaodata 匯出預設把 CD 版的追加併進 `nobu5-md`。
+
 ## 指令
 
 ```bash
 .venv/bin/python haouden/export.py [--rom ROM] [--out DIR]          # → haouden/output/（CSV、XLSX、頭像 PNG），約 2 秒
-.venv/bin/python haouden/export_kaodata.py --out <kaodata>/data-local/nobu5-md
+.venv/bin/python haouden/export_kaodata.py --out <kaodata>/data-local/nobu5-md [--no-cd]
 .venv/bin/python haouden/verify_kaodata_export.py --dataset <kaodata>/data-local/nobu5-md
 .venv/bin/python haouden/verify_scenarios.py                 # 約 10 秒
 .venv/bin/python haouden/verify_faces.py [--quick]           # 約 2 分鐘
+.venv/bin/python haouden/verify_cd_faces.py                 # Mega-CD，約 50 秒
+.venv/bin/python haouden/verify_cd_scenarios.py             # Mega-CD，約 3 秒
 ```
 
 - ROM 預設直接讀 `roms/Nobunaga no Yabou - Haouden (Japan).zip`，`--rom` 也接受 .md／.bin。
 - LZ 解壓用 `lz.py`（遊戲 `$3C36` 的 KOEI LZ，和 MD 三國志III 相同，取自 `san3/lz.py`）。
 - 依賴：Pillow；openpyxl（可選，匯出 .xlsx）。驗證腳本用 MAME（`tools/mame.py`、`tools/replay.py`）。
+- Mega-CD 版讀 `roms/megacd/Nobunaga no Yabou - Haouden (Japan).7z`（`--image`／`--cd` 可換），驗證用 Genesis Plus GX（`tools/gpgx.py`）。
 
 ## 檔案
 
 | 檔案 | 用途 |
 |------|------|
 | `rom.py` | ROM 解碼：劇本（人物、城、大名）、後登場人物、名稱表、城的地圖位置、合戦與城類表、頭像（專屬＋組合） |
+| `cd.py` | Mega-CD 版：`Disc`（`SMAIN.PRG` 的頭像表、`ORGKAO.DAT`、`SAVEDAT1`–`4.DAT` 劇本、`TAIKI.DAT` 後登場人物；組合臉沿用卡帶版） |
 | `lz.py` | KOEI LZ 解壓 |
 | `export.py` | 匯出 CSV／XLSX／PNG |
-| `export_kaodata.py` | 匯出 kaodata 統一格式資料集 `nobu5-md`（348 張專屬頭像＋6 組組合臉；沒有人物用的 27 張標上 `group` 姫／事件人物／不明，有標籤的附 `name`） |
+| `export_kaodata.py` | 匯出 kaodata 統一格式資料集 `nobu5-md`（348 張專屬頭像＋6 組組合臉；沒有人物用的 27 張標上 `group` 姫／事件人物／不明，有標籤的附 `name`；另含 Mega-CD 版的 28 張頭像與 28 人的「Mega-CD 版」樣貌） |
 | `verify_kaodata_export.py` | 資料集用參考渲染器畫出來，和 ROM 解碼逐 pixel 比對；checksums |
 | `verify_scenarios.py` | 3 劇本載入後的 RAM 與 ROM 劇本映像逐 byte 比對，再從 RAM 解碼比對 |
 | `verify_faces.py` | 927 個頭像碼逐一換進選大名確認畫面，比對遊戲寫進 VRAM 的 tile 與 CRAM 調色盤 |
+| `verify_cd_faces.py` | Mega-CD：同上，用 Genesis Plus GX |
+| `verify_cd_scenarios.py` | Mega-CD：4 劇本載入後的 RAM 與 `SAVEDAT1`–`4.DAT` 逐 byte 比對 |
 
 ## 輸出（`haouden/output/`）
 
@@ -42,7 +50,7 @@ KOEI，1993，MD（ROM 表頭 `(C)T-76 1993.DEC`，`GM T-76153 -00`，2 MB，che
 | `haouden.xlsx` | 以上各表（需 openpyxl） |
 | `faces/` | 927 個頭像碼的頭像（`048_龍造寺隆信.png`，40×48，組合臉已組好；人物 Id = 頭像碼） |
 
-kaodata 資料集 `nobu5-md`（遊戲代碼 NOBU5）：817 人，321 人用專屬頭像、496 人用組合臉（6 組 × 5 部位 × 5 款，`code` 是遊戲的組合碼）；348 張專屬頭像。ROM 沒有讀音，所以沒有 `reading`。像素存色號，色盤是 MD 的頭像調色盤（MAME 色階換算）。
+kaodata 資料集 `nobu5-md`（遊戲代碼 NOBU5）：817 人，321 人用專屬頭像、496 人用組合臉（6 組 × 5 部位 × 5 款，`code` 是遊戲的組合碼）；348 張專屬頭像（含 Mega-CD 版時 376 張，28 人多一個「Mega-CD 版」樣貌，見 docs/MEGACD.md §5；尚未交給 kaodata）。ROM 沒有讀音，所以沒有 `reading`。像素存色號，色盤是 MD 的頭像調色盤（MAME 色階換算）。
 
 ## 進度
 
@@ -51,6 +59,7 @@ kaodata 資料集 `nobu5-md`（遊戲代碼 NOBU5）：817 人，321 人用專�
 - ✓ 名稱表：國 64、官位 226、家宝 120、合戦 15、能力名 8、姫 93、地形 15；長宗我部／香宗我部外字
 - ✓ 城的大地圖位置、合戦對應城、城類（程式參照點已確認，資料與 SFC 相同）
 - ✓ 頭像：專屬 348 張＋組合臉 6 組；頭像碼 0–0x3A0（0x398、0x399 遊戲不處理）；kaodata `nobu5-md`
+- ✓ Mega-CD 版：4 劇本、頭像（28 張新增），模擬器驗證，kaodata 匯出（未交）
 - 未做：大地圖、戰場地圖圖像；字型（文字是 Shift-JIS，不需要字表）
 - 未解：見 [docs/ROM_FORMAT.md](docs/ROM_FORMAT.md) §8
 
@@ -60,6 +69,7 @@ kaodata 資料集 `nobu5-md`（遊戲代碼 NOBU5）：817 人，321 人用專�
 |------|------|------|
 | `verify_scenarios.py` | 選劇本後（人數畫面）RAM `$FF001A–$FF7475` 與 `Rom.ram_image` 逐 byte 比對；再從 RAM 解碼人物、城、大名 | 3 劇本各 29788/29788 bytes 相同；人物 412/412、459/459、413/413，城 110/110 × 3，大名 48/48、43/43、27/27；9 秒 |
 | `verify_faces.py` | 1551、1 人、選大名畫面（游標在龍造寺隆信）存 savestate；把他的人物 Id（`$FF0D0E`）換成每個頭像碼後按 C，比對確認框寫到 VRAM `$4000` 的 960 bytes 與 CRAM 第 1 列；未改動時 = 頭像碼 0x30 | 未改動 OK；專屬頭像 348/348、組合臉 579/579、調色盤 NG 0、ALL OK；122 秒 |
-| `verify_kaodata_export.py` | 參考渲染器與 `Rom.face_pixels` 逐 pixel 比對、checksums | 人物 817/817、專屬頭像 348/348、checksums OK |
+| `verify_kaodata_export.py` | 參考渲染器與 `Rom.face_pixels` 逐 pixel 比對、checksums | 人物 817/817、專屬頭像 348/348、checksums OK；含 CD：頭像 376/376、樣貌 28 |
+| `verify_cd_faces.py`／`verify_cd_scenarios.py` | Mega-CD 版，見 docs/MEGACD.md §4 | 專屬 376/376、組合 551/551；4 劇本 29814 bytes 一致 |
 
 另外和 SFC 版的解碼（`~/works/superfamicom-re/haouden/rom.py`）逐欄比對：3 劇本的人物、城、大名、後登場人物所有已知欄位都相同，人物 +29（SFC +27）與 SFC **Rev 1** 相同（與 Rev 0 有 34 人不同）；姓名只有字形差異（蛎崎／蠣崎、尭煕／尭熙、頴娃／穎娃）。MD 版畫面上的欄位意義沒有另外逐一截圖對照。

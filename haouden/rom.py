@@ -97,6 +97,9 @@ def face_group(fid: int) -> int:
 
 
 class Rom:
+    # what the Mega-CD's SMAIN.PRG has elsewhere (cd.Disc)
+    scenario_count, face_table, face_table2, face_palette_at = SCENARIO_COUNT, FACE_TABLE, FACE_TABLE2, FACE_PALETTE
+
     def __init__(self, path: str = DEFAULT_ROM):
         self.path = path
         self.data = load_rom_bytes(path)
@@ -151,11 +154,14 @@ class Rom:
             out.append(p)
         return out
 
+    def future_source(self, sc: int) -> tuple[bytes, int]:
+        return self.data, FUTURE[sc]
+
     def future_persons(self, sc: int) -> list[dict]:
-        p = FUTURE[sc]
+        data, p = self.future_source(sc)
         out = []
-        while self.data[p + 4]:
-            r = self.data[p:p + FUTURE_SIZE]
+        while data[p + 4]:
+            r = data[p:p + FUTURE_SIZE]
             sur, given = self.name(r[4:18])
             f = {"no": len(out), "raw": r, "year": BIRTH_BASE + r[0], "b1": r[1], "b2": r[2], "castle": r[3],
                  "surname": sur, "given": given, "born": BIRTH_BASE + r[18], "b24": r[24], "b25": r[25],
@@ -215,7 +221,7 @@ class Rom:
     def person_master(self) -> dict[int, dict]:
         """Person id -> first record (scenario 1-3, then the later-appearing lists) plus every name used."""
         out: dict[int, dict] = {}
-        for sc in range(SCENARIO_COUNT):
+        for sc in range(self.scenario_count):
             for kind, recs in (("start", self.scenario_persons(sc)), ("future", self.future_persons(sc))):
                 for r in recs:
                     m = out.setdefault(r["id"], {"id": r["id"], "first": r, "names": [], "appear": []})
@@ -240,13 +246,13 @@ class Rom:
         if fid < 0xD3:
             return ("portrait", fid + 12)
         if fid < 0x36E:
-            w = be16(self.data, FACE_TABLE + 2 * fid)
+            w = be16(self.data, self.face_table + 2 * fid)
             return ("portrait", 12 + (w & 0x7FFF)) if w & 0x8000 else ("comp", face_group(fid), w)
         d = fid - 0x36E
         if d < 12:
             return ("portrait", d)
         if fid < 0x392:
-            return ("comp", face_group(fid), be16(self.data, FACE_TABLE2 + 2 * d))
+            return ("comp", face_group(fid), be16(self.data, self.face_table2 + 2 * d))
         if fid < 0x398:
             return ("portrait", fid - 0x24B)
         if 0x39A <= fid < FACE_ID_COUNT:
@@ -284,7 +290,7 @@ class Rom:
         return self.portrait_tiles(s[1]) if s[0] == "portrait" else self.composite(s[1], s[2])
 
     def face_palette(self) -> list[int]:
-        return [be16(self.data, FACE_PALETTE + 2 * i) for i in range(16)]
+        return [be16(self.data, self.face_palette_at + 2 * i) for i in range(16)]
 
     def face_rgb(self, fid: int) -> list[tuple[int, int, int]]:
         pal = [md_rgb(c) for c in self.face_palette()]
