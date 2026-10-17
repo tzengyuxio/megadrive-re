@@ -1,6 +1,6 @@
 # megadrive-re
 
-MD／Genesis 歷史策略遊戲（非光榮為主，例如三國志列傳）的 ROM 逆向工程：解析人物、頭像、地圖等遊戲內容，並匯出素材站的統一格式資料集。
+MD／Genesis 歷史策略遊戲的 ROM 逆向工程：解析人物、頭像、地圖等遊戲內容。光榮作品的頭像匯出成 kaodata 格式（kaodata 的 `docs/data-format.md`），非光榮作品（三国志列伝等）日後依素材站規格匯出。
 
 每款遊戲一個資料夾，指令、輸出檔、進度寫在該資料夾的 `README.md`，ROM 格式（含未解部分）寫在 `docs/`。
 
@@ -25,6 +25,8 @@ MD／Genesis 歷史策略遊戲（非光榮為主，例如三國志列傳）的 
 | [daikoukai2](daikoukai2/) | 大航海時代II | KOEI 1994 | 人物、VIP、女性、船種、港、道具、發見物、頭像（專屬＋組合臉）、世界地圖格資料；kaodata `koukai2-md`；地圖圖形未解 |
 | [dokuritsu](dokuritsu/) | Liberty or Death（独立戦争，美國限定） | KOEI 1994 | 劇本、人物、事件人物、地點、州、頭像（專屬＋組合臉）、大地圖、HEX 戰場格資料；kaodata `liberty-md` |
 | [sgz5](sgz5/) | San Guo Zhi V（中國盜版，三國志V 移植改作） | — | 7 劇本、人物、城、勢力、寶物、頭像、選君主地圖；非光榮正式作品，不出 kaodata |
+
+光榮在 MD 上發行的卡帶作品 15 款已全部處理並交給 kaodata（英日版並存者以日版為代表；Liberty or Death 只有美版）。Mega-CD 版（三國志III、ウイニングポスト、元朝秘史、覇王伝）尚未處理。
 
 各遊戲的驗證方式與結果（皆以 MAME 跑遊戲本身的程式）寫在各自的 README。
 
