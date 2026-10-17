@@ -74,7 +74,7 @@ KOEI，Mega-CD（系統區 `(C)T-76 1993.FEB`、序號 `GM T-76014 -00`）。映
 
 - 頭像 307–325：19 張重畫的合成臉（`addedIn: "CD"`，`code` 是合成臉碼）
 - 何進：新 id 532，`addedIn: "CD"`，`note`「Mega-CD 版取代賈範（68）」，臉是合成臉 `8C93`（和賈範同碼）；68 仍是賈範
-- `expressions`（`label`「Mega-CD 版」）：上面 19 人（CD 頭像），劉度（合成臉 `800C`，遊戲實際顯示的臉）
+- `expressions`（`label`「Mega-CD 版」）：上面 19 人（CD 頭像），劉度（合成臉 `800C`，遊戲實際顯示的臉）；這 20 人的 `face` 加 `label`「卡帶版」
 - 頭像 326：`D563`（CD 版劉度的人物資料指定、但碼表沒收而沒用到的臉，用卡帶版的部位畫），`group`「未使用」、`name`「劉度」、`addedIn: "CD"`，`note` 說明沒用到的原因
 - `source.inputs` 加上 Track 01 的檔名與 SHA-1；`data/surnames.tsv` 加「何」
 

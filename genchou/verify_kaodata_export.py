@@ -10,7 +10,7 @@
 With the Mega-CD version (portraits with addedIn): the CD portraits must equal cd.slot (checked against the game
 by verify_cd_faces.py) and the CD's characters must equal cd.face_tiles; every cartridge character whose CD face
 differs (a new portrait, or a pre-rendered composite that differs by one tile from the cartridge's parts, cd.py) must
-have it as its one expression, labelled Mega-CD 版, and no other character may have one.
+have it as its one expression, labelled Mega-CD 版 (its face labelled 卡帶版), and no other character may have one.
 
 Usage: .venv/bin/python genchou/verify_kaodata_export.py --dataset <dir> [--rom ROM] [--cd IMAGE]
 """
@@ -61,6 +61,7 @@ def main() -> None:
         want_cd(*cd_faces[c["id"]]) if c["id"] in cd_faces else want(*faces[c["id"]]))]
     bad_ch += [c["id"] for c in meta["characters"] if c.get("expressions") and (
         c["id"] not in cd_expr or len(c["expressions"]) != 1 or c["expressions"][0].get("label") != "Mega-CD 版"
+        or c["face"].get("label") != "卡帶版"
         or rgba(c["expressions"][0]) != want_cd(*cd_expr[c["id"]]))]
     bad_ch += [i for i in cd_expr if "expressions" not in next(c for c in meta["characters"] if c["id"] == i)]
     shown = sorted(i for i, (code, w) in cd_faces.items() if code & 0x8000 and want_cd(code, w) != want(code, w))

@@ -52,7 +52,7 @@ face id 的分段（0xD3 以下直接是專屬頭像 id + 12 等，見 ROM_FORMA
 依 kaodata `docs/data-format.md` 的 `addedIn: "CD"`，併進 `nobu5-md`（`export_kaodata.py` 預設含 CD，`--no-cd` 不含；不含時與 kaodata 現有的 `nobu5-md` 逐位元相同）：
 
 - 專屬頭像 348–375：新增的 28 張（`addedIn: "CD"`，都有人用，沒有 `group`）
-- 上面 28 人保留卡帶版的組合臉，CD 頭像放進 `expressions`，`label`「Mega-CD 版」
+- 上面 28 人保留卡帶版的組合臉，CD 頭像放進 `expressions`，`label`「Mega-CD 版」，`face` 的 `label`「卡帶版」
 - 沒有新人物（1583 年劇本的人物全是既有的 id 與姓名）
 - `source.inputs` 加上 Track 01 的檔名與 SHA-1
 

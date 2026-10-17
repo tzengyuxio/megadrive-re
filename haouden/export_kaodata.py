@@ -42,6 +42,7 @@ from rom import (
 
 CANVAS = (FACE_W * 8, FACE_H * 8)
 CD_LABEL = "Mega-CD 版"
+CART_LABEL = "卡帶版"         # face label of the characters with a Mega-CD 版 expression
 SLOTS = [(f"part{p}", f"部位{p + 1}") for p in range(FACE_PART_COUNT)]
 # portrait -> (group, ROM address of the label shown with it, or None). Face codes 0x36E-0x379 are portraits 0-11
 # (0x22E2C: 0x36E + n under "%s家姫君"), 0x392-0x397 / 0x39A-0x3A0 are portraits 327-332 / 333-339;
@@ -116,6 +117,7 @@ def build(rom_path: str, cd_path: str | None = None) -> tuple[dict, list[bytes]]
         ch = {"id": pid, "name": f"{r['surname']} {r['given']}", "face": face(rom.face_source(pid))}
         if disc and disc.face_source(pid) != rom.face_source(pid):
             ch["expressions"] = [{**face(disc.face_source(pid)), "label": CD_LABEL}]
+            ch["face"] = {**ch["face"], "label": CART_LABEL}
         characters.append(ch)
 
     colors = [f"#{r:02x}{g:02x}{b:02x}" for r, g, b in (md_rgb(c) for c in rom.face_palette())]

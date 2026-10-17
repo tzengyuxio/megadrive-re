@@ -6,7 +6,7 @@
 2. checksums.json must equal the checksums recomputed from the dataset.
 3. With the Mega-CD version (portraits with addedIn): the CD portraits, the CD characters and every Mega-CD 版
    expression must equal the CD's faces (cd.Disc, checked against the game by verify_cd_faces.py); every person
-   whose CD face differs from the cartridge's has one; the unused CD portraits (D563) equal the cartridge's
+   whose CD face differs from the cartridge's has one (labelled Mega-CD 版, its face 卡帶版); the unused CD portraits (D563) equal the cartridge's
    composite of their code.
 
 Usage: .venv/bin/python san3/verify_kaodata_export.py [--dataset DIR] [--rom ROM] [--cd IMAGE]
@@ -58,7 +58,9 @@ def main() -> None:
         changed = q["name"] == p["name"] and want(q["face"], disc) != want(p["face"])
         expr = c.get("expressions", [])
         n_expr += bool(expr)
-        if changed != bool(expr) or expr and (len(expr) != 1 or rgba(expr[0]) != want(q["face"], disc)):
+        if changed != bool(expr) or expr and (len(expr) != 1 or rgba(expr[0]) != want(q["face"], disc)
+                                              or expr[0].get("label") != "Mega-CD 版"
+                                              or c["face"].get("label") != "卡帶版"):
             bad_ch.append(c["id"])
     n_ch, n_pt = len(chars), len(meta["portraits"])
     n_comp = sum("variant" in c["face"] for c in chars)

@@ -56,6 +56,7 @@ CHILD_ID = 2000
 NAME_ZH = os.path.join(HERE, "data", "name_zh.json")
 CD_PORTRAITS = [*cd.NEW_MEN, *cd.NEW_WOMEN]      # appended after the cartridge's portraits
 CD_LABEL = "Mega-CD 版"
+CART_LABEL = "卡帶版"         # face label of the characters with a Mega-CD 版 expression
 
 
 def cells_image(rom: bytes, src: int, cells: list[int]) -> bytes:
@@ -197,6 +198,8 @@ def build(rom_path: str, cd_path: str | None = None) -> tuple[dict, list[bytes]]
             ch["expressions"] = [{**face(changed[c["id"]], c["woman"], True), "label": CD_LABEL}]
         elif c not in new and c["code"] in redrawn:
             ch["expressions"] = [{**face(c["code"], c["woman"], True), "label": CD_LABEL}]
+        if "expressions" in ch:
+            ch["face"] = {**ch["face"], "label": CART_LABEL}
         if c in new:
             ch["addedIn"] = "CD"
         chars.append(ch)

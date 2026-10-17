@@ -6,7 +6,7 @@
 2. checksums.json must equal the checksums recomputed from the dataset.
 3. With the Mega-CD version (portraits with addedIn): the CD portraits must equal cd.Disc (checked against the
    game by verify_cd_faces.py), and exactly the persons whose CD face differs have it as their one expression,
-   labelled Mega-CD 版.
+   labelled Mega-CD 版 (their face labelled 卡帶版).
 
 Usage: .venv/bin/python haouden/verify_kaodata_export.py --dataset <dir> [--rom ROM] [--cd IMAGE]
 """
@@ -50,6 +50,7 @@ def main() -> None:
         expr = c.get("expressions", [])
         n_expr += bool(expr)
         if changed != bool(expr) or expr and (len(expr) != 1 or expr[0].get("label") != "Mega-CD 版"
+                                              or c["face"].get("label") != "卡帶版"
                                               or rgba(expr[0]) != want(disc.face_pixels(c["id"]))):
             bad_ch.append(c["id"])
     n_ch, n_pt = len(meta["characters"]), len(meta["portraits"])

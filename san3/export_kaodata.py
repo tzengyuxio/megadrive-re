@@ -47,6 +47,7 @@ NEW_FACES = [(0xE7, 8, "新君主（男）"), (0xEF, 8, "新君主（女）"), (
 SLOTS = [("p0", "上半（推測：頭）"), ("p1", "下半（推測：身）"), ("p2", "目（推測）"), ("p3", "鼻（推測）"),
          ("p4", "口（推測）")]
 CD_LABEL = "Mega-CD 版"
+CART_LABEL = "卡帶版"         # face label of the characters with a Mega-CD 版 expression
 
 
 def load_surnames() -> dict[str, str]:
@@ -147,6 +148,7 @@ def build(rom_path: str, cd_path: str | None = None) -> tuple[dict, list[bytes]]
         q = cd_persons[p["id"]] if disc else p
         if disc and q["name"] == p["name"] and face_of(q["face"], True) != ch["face"]:
             ch["expressions"] = [{**face_of(q["face"], True), "label": CD_LABEL}]
+            ch["face"] = {**ch["face"], "label": CART_LABEL}
         characters.append(ch)
     for q in cd_persons:
         p = characters[q["id"]]
