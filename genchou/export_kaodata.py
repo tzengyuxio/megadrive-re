@@ -14,13 +14,16 @@ Characters: the scenario persons and the family blocks distinct by (name, face c
 4 scenarios (Japanese: block B of each scenario; USA: one table of 20) distinct the same way get ids 1000-; the
 family blocks' children distinct by (name, face code) get ids 2000-, as in the other genchou datasets. Japanese
 names written only in kana get a reading (hiragana, ・ → space, as genchou-sfc); names with kanji and the USA's
-English names have none. No version has Chinese names, so there is no nameZh. Women's portraits no character uses
+English names have none. The Japanese version's nameZh comes from data/name_zh.json (by character id; null for
+5 children only in the MD version, who get none), taken from kaodata's genchou-pc98/x68/pc88/fc (from KOEI's Chinese
+DOS version, typos corrected) by the Japanese names; the USA version has none. Women's portraits no character uses
 (the USA version keeps 20 of the women; the Japanese one uses every portrait) get group 女性, without a name.
 
 Usage: .venv/bin/python genchou/export_kaodata.py --out <dir> [--rom ROM]
 """
 import argparse
 import hashlib
+import json
 import os
 import sys
 
@@ -38,6 +41,7 @@ SLOT_LABELS = {"eyes": "眼", "nose": "鼻", "mouth": "口", "top": "上部", "b
 FACE_GROUPS = ["蒙古", "中國", "內亞", "印度", "日本", "西歐", "東歐", "伊斯蘭"]
 WOMEN_ID = 1000
 CHILD_ID = 2000
+NAME_ZH = os.path.join(HERE, "data", "name_zh.json")
 
 
 def cells_image(rom: bytes, src: int, cells: list[int]) -> bytes:
@@ -74,6 +78,11 @@ def characters(rom: bytes) -> list[dict]:
     return out
 
 
+def names_zh() -> dict[int, str | None]:
+    with open(NAME_ZH, encoding="utf-8") as f:
+        return {int(k): v for k, v in json.load(f).items()}
+
+
 def reading(name: str) -> str | None:
     """Kana-only names -> hiragana ('・' becomes a space); names with kanji or latin letters have none."""
     s = kaodata.hiragana(name).replace("・", " ")
@@ -107,9 +116,14 @@ def build(rom_path: str) -> tuple[dict, list[bytes]]:
         portraits.append({"img": add(bytes(R.tiles_pixels(R.portrait_tiles(rom, n))), blob=1),
                           "code": f"{code:04X}"})
 
-    chars = []
-    for c in characters(rom):
+    chars, found = [], characters(rom)
+    zh = names_zh() if R.layout(rom).region == "J" else {}
+    if zh:
+        assert sorted(zh) == sorted(c["id"] for c in found), "data/name_zh.json does not match the character ids"
+    for c in found:
         ch = {"id": c["id"], "name": c["name"]}
+        if zh.get(c["id"]):
+            ch["nameZh"] = zh[c["id"]]
         if (r := reading(c["name"])) is not None:
             ch["reading"] = r
         code = c["code"]

@@ -24,7 +24,8 @@ KOEI，1993，MD。以**日版**為主：『蒼き狼と白き牝鹿・元朝秘
 | `rom.py` | ROM 解碼：版本 `Layout`、文字（日版 SJIS＋半形片假名、美版 ASCII）、劇本（人物、國、王家、家族、子女、女性、地名）、解壓縮、頭像（專屬＋組合） |
 | `export.py` | 匯出 CSV／XLSX／PNG |
 | `export_kaodata.py` | kaodata 統一格式資料集 `genchou-md`（97 張專屬頭像＋56 個組合臉頭） |
-| `verify_kaodata_export.py` | 資料集用參考渲染器畫出來，和 ROM 解碼逐 pixel 比對；checksums |
+| `verify_kaodata_export.py` | 資料集用參考渲染器畫出來，和 ROM 解碼逐 pixel 比對；nameZh 與 `data/name_zh.json` 一致；checksums |
+| `data/name_zh.json` | [EXT] kaodata 的 `nameZh`（人物 id → 中文名，null＝無來源）；取自 kaodata 的 genchou-pc98／x68／pc88／fc（kaodata-re 從光榮中文 DOS 版取來、已改正錯字），依日文名對照；アルベルトゥス（113）在 pc98 有兩人，依前後人物取 120 號「阿爾伯特斯」 |
 | `verify_scenarios.py` | 4 劇本載入後的 RAM 與 ROM 區塊逐 byte 比對 |
 | `verify_faces.py` | 每個頭像碼寫進鐵木真的記錄，比對 VRAM tile、CRAM 調色盤、畫面 pixel |
 | `verify_persons.py` | 人物數值寫進鐵木真，讀 情報 → 君主（Info → Ruler）面板 |
@@ -51,7 +52,7 @@ KOEI，1993，MD。以**日版**為主：『蒼き狼と白き牝鹿・元朝秘
 
 預設用日版（kaodata 的其他版本都是日版）：405 人（男 310、女 73 為 1000 起、家族區子女 22 為 2000 起，比照其他 genchou 資料集），99 人用專屬頭像、306 人用組合臉；97 張專屬頭像（全部有人用，沒有 `group`）、56 個組合臉頭。
 
-- `name` 照 ROM 原文（半形片假名轉全形）；`reading` 比照 `genchou-sfc`：只有片假名的名字轉成平假名（`・` 換空白），含漢字的名字不給；不加 ROM 以外的人名，沒有 `nameZh`。
+- `name` 照 ROM 原文（半形片假名轉全形）；`reading` 比照 `genchou-sfc`：只有片假名的名字轉成平假名（`・` 換空白），含漢字的名字不給；`nameZh` 取自 `data/name_zh.json`（400 人；MD 獨有的子女 2002、2016、2017、2019、2021 沒有中文版來源，不給）；美版不給 `nameZh`。
 - 同名同頭像碼的人物合併；同名不同碼的組合臉變體 label 為「<地區>(推測)／男 N」「／女 N」。
 - 和 `genchou-sfc` 對照：id 0–247（男）與 1000–1072（女）的 name、reading、頭像碼／專屬頭像編號全部一致（321/321）；MD 日版多了 id 248–309（劇本 1–4 家族區裡的 62 人，如ビルゲ・ベキ、和田義盛、ルイ8世）與 2000–2021 的子女。專屬頭像 97/97、組合臉 234/234（以碼比對）的 pixel 和 SFC 相同（色盤不同）；`parts` 只有 slot 順序不同（MD 是疊圖順序：上部、下部、眼、鼻、口）。
 - 美版（`--rom` 美版）：355 人（男 313、女 20、子女 22），英文名沒有 `reading`；沒人用的 20 張女性頭像標 `group: 女性`、不給 `name`。
@@ -76,6 +77,6 @@ KOEI，1993，MD。以**日版**為主：『蒼き狼と白き牝鹿・元朝秘
 | `verify_faces.py` | 標題畫面存檔；把頭像碼寫進劇本 1 鐵木真的 ROM 記錄後開新遊戲，比對選單畫面 VRAM tile `$200` 起 960 bytes、CRAM palette line 1、截圖的 40×48 pixel | 403/403（專屬 97、組合臉碼 306：人物、家族、子女、女性用到的全部） | 370/370（專屬 97、組合臉碼 273） |
 | `verify_persons.py` | 人物的體力、能力、年齢寫進鐵木真，讀 情報 → 君主 面板（日版面板比美版左移 2 格，數字用 8×16 字型 `FONT_J`） | 346/346 種數值組合 | 346/346 |
 | `verify_countries.py` | 國的 +10..+15、+21..+23 寫進第一個國，讀第一回合主畫面國資訊 | 113/113 | 113/113 |
-| `verify_kaodata_export.py` | 參考渲染器（`tools/kaodata.py`）與 `rom.face_tiles` 逐 pixel 比對、checksums | 405/405 人、97/97 張、OK | 355/355 人、97/97 張、OK |
+| `verify_kaodata_export.py` | 參考渲染器（`tools/kaodata.py`）與 `rom.face_tiles` 逐 pixel 比對、nameZh、checksums | 405/405 人、97/97 張、nameZh 405/405、OK | 355/355 人、97/97 張、無 nameZh、OK |
 
 日版標題畫面要等到第 1600 幀左右才收 Start（美版 1100）。女性頭像碼加 `0x39` 才是專屬頭像編號，這是從女性頭像程式（日 `$7AE6`／美 `$77CC`）讀出來的；`verify_faces.py` 驗的是頭像表本身（男性路徑用碼 0–0x60 叫出全部 97 張），沒有另外在后妃畫面驗女性路徑。

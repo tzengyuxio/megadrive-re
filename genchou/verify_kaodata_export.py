@@ -3,7 +3,9 @@
 
 1. Every character and portrait rendered with the reference renderer (tools/kaodata.py, spec §6) must equal
    rom.face_tiles (checked against the game's VRAM, CRAM and screen by verify_faces.py) in the face palette.
-2. checksums.json must equal the checksums recomputed from the dataset.
+2. Japanese version: every character's nameZh must be the one in data/name_zh.json (none where it is null);
+   USA version: no nameZh.
+3. checksums.json must equal the checksums recomputed from the dataset.
 
 Usage: .venv/bin/python genchou/verify_kaodata_export.py --dataset <dir> [--rom ROM]
 """
@@ -17,7 +19,7 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(os.path.dirname(HERE), "tools"))
 import kaodata
 import rom as R
-from export_kaodata import CHILD_ID, WOMEN_ID, characters
+from export_kaodata import CHILD_ID, WOMEN_ID, characters, names_zh
 
 
 def main() -> None:
@@ -45,10 +47,13 @@ def main() -> None:
     kids = sum(c["id"] >= CHILD_ID for c in meta["characters"])
     print(f"[render] characters {n_ch - len(bad_ch)}/{n_ch} ({women} women, {kids} children), portraits {n_pt - len(bad_pt)}/{n_pt} "
           f"match the ROM" + (f" (NG {bad_ch[:10]} {bad_pt[:10]})" if bad_ch or bad_pt else ""))
+    zh = names_zh() if R.layout(rom).region == "J" else {}
+    bad_zh = [c["id"] for c in meta["characters"] if c.get("nameZh") != zh.get(c["id"])]
+    print(f"[nameZh] {n_ch - len(bad_zh)}/{n_ch} = data/name_zh.json" + (f" (NG {bad_zh[:10]})" if bad_zh else ""))
     with open(os.path.join(args.dataset, "checksums.json"), encoding="utf-8") as f:
         sums_ok = json.load(f) == kaodata.checksums(meta, blobs)
     print("[checksums] " + ("OK" if sums_ok else "NG"))
-    errors = len(bad_ch) + len(bad_pt) + (not sums_ok)
+    errors = len(bad_ch) + len(bad_pt) + len(bad_zh) + (not sums_ok)
     print("ALL OK" if not errors else f"{errors} problem(s)")
     raise SystemExit(1 if errors else 0)
 
