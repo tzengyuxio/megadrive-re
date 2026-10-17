@@ -125,6 +125,9 @@ def md_rgb(c: int) -> tuple[int, int, int]:
 
 
 class Rom:
+    # table addresses that the Mega-CD's SMAIN.PRG has elsewhere (cd.Disc)
+    persons_at, face_pal_no, face_palettes = PERSONS, FACE_PAL_NO, FACE_PALETTES
+
     def __init__(self, path: str = DEFAULT_ROM):
         self.data = load_rom(path)
 
@@ -172,7 +175,7 @@ class Rom:
         +15 name (Shift-JIS, 0-padded, 7 bytes), +22 reading (8 half-width katakana)."""
         out = []
         for pid in range(PERSON_COUNT):
-            o = PERSONS + PERSON_SIZE * pid
+            o = self.persons_at + PERSON_SIZE * pid
             r = self.data[o:o + PERSON_SIZE]
             out.append({
                 "id": pid, "offset": o, "raw": r, "face": be16(r, 0),
@@ -312,14 +315,14 @@ class Rom:
         return self.ptr(FACE_TABLES[min((n - 1) // 100, 3)] + 4 * (n - 1))
 
     def face_palette_no(self, face: int) -> int:
-        return 0 if face & 0x8000 else self.data[FACE_PAL_NO + face - 1]
+        return 0 if face & 0x8000 else self.data[self.face_pal_no + face - 1]
 
     def face_palette(self, face: int) -> list[int]:
         """16 CRAM words; colour 15 is not loaded by the game (FACE_COLOUR15 here)."""
         return self.palette(self.face_palette_no(face))
 
     def palette(self, no: int) -> list[int]:
-        at = FACE_PALETTES + 32 * no
+        at = self.face_palettes + 32 * no
         return [be16(self.data, at + 2 * i) for i in range(FACE_PAL_COLOURS)] + [FACE_COLOUR15]
 
     def composite_type(self, face: int) -> int:

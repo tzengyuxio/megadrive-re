@@ -2,11 +2,13 @@
 
 KOEI，1992.AUG，MD（1.5 MB，68000 C 編譯，大端序）。6 個劇本，46 州，532 人。資料內容就是 SFC 版（`~/works/superfamicom-re/san3/`）的表，改成大端序、加 pad、文字改 Shift-JIS；戰場資料與 SFC 逐 byte 相同。ROM 結構與各表格式見 [docs/ROM_FORMAT.md](docs/ROM_FORMAT.md)。
 
+Mega-CD 版（多了劇本「黄巾の乱」、何進取代賈範、頭像預先合成）見 [docs/MEGACD.md](docs/MEGACD.md)；`cd.py` 讀光碟，沿用 `rom.py` 的解碼器，kaodata 匯出預設把 CD 版的追加併進 `san3-md`。
+
 ## 指令
 
 ```bash
 .venv/bin/python san3/export.py [--rom ROM] [--out DIR]          # → san3/output/（CSV、XLSX、PNG）
-.venv/bin/python san3/export_kaodata.py [--out DIR]              # 預設 san3/output/kaodata/san3-md
+.venv/bin/python san3/export_kaodata.py [--out DIR] [--no-cd]     # 預設 san3/output/kaodata/san3-md
 .venv/bin/python san3/verify_kaodata_export.py [--dataset DIR]
 .venv/bin/python tools/parts_sheet.py --dataset san3/output/kaodata/san3-md --out san3/output/kaodata
 .venv/bin/python san3/verify_scenarios.py [--dump DIR | --load DIR]   # 約 27 秒
@@ -15,28 +17,34 @@ KOEI，1992.AUG，MD（1.5 MB，68000 C 編譯，大端序）。6 個劇本，46
 .venv/bin/python san3/verify_faces.py [--keep DIR]                    # 約 35 秒
 .venv/bin/python san3/verify_map.py [--keep DIR]                      # 約 9 秒
 .venv/bin/python san3/verify_tactical.py                              # 約 5 秒
+.venv/bin/python san3/verify_cd_faces.py                               # Mega-CD，約 9 秒
+.venv/bin/python san3/verify_cd_scenarios.py                           # Mega-CD，約 3 秒
 ```
 
 - ROM 預設讀 `roms/Sangokushi III (Japan).zip`，`--rom` 也接受 .md。
 - 依賴：Pillow、openpyxl（沒有就只輸出 CSV）。地圖標字用 macOS 的ヒラギノ角ゴシック。
 - 驗證腳本用 MAME（共用的 `tools/mame.py`、`tools/drive.py`），照按鍵序列玩到指令畫面；操作序列見 ROM_FORMAT.md §1。
 - 顏色一律用 MAME 的 MD 色階（`rom.LEVELS`），和截圖一致。
+- Mega-CD 版讀 `roms/megacd/Sangokushi III (Japan).7z`（`--image`／`--cd` 可換），驗證用 Genesis Plus GX（`tools/gpgx.py`）。
 
 ## 檔案
 
 | 檔案 | 用途 |
 |------|------|
 | `rom.py` | ROM 解碼：文字（SJIS＋外字 48 字）、字型、人物、6 劇本（人物、州、勢力、header、寶物持有者）、州名、寶物、頭像（一般＋合成）與調色盤、大地圖、戰場 |
+| `cd.py` | Mega-CD 版：`Disc`（`SMAIN.PRG` 的人物表與調色盤、`ORGKAO.DAT` 頭像與合成臉碼表、`SINARIO.DAT` 7 劇本） |
 | `lz.py` | MD 版 KOEI LZ 解碼（`$3374` 的 C 實作，沒有 SFC 的查表區塊） |
 | `export.py` | 匯出 CSV／XLSX／PNG |
-| `export_kaodata.py` | 匯出 kaodata 資料集 `san3-md`（一般頭像 307 張＋合成臉 13 型）；讀音在姓名間加空白（`data/surnames.tsv`）；沒人用的頭像標 `group`：事件人物 10 位（附名字）、新君主／新武將男女 |
+| `export_kaodata.py` | 匯出 kaodata 資料集 `san3-md`（一般頭像 307 張＋合成臉 13 型；另含 Mega-CD 版的 19 張重畫合成臉、未使用的劉度合成臉 `D563`、何進、20 人的「Mega-CD 版」樣貌）；讀音在姓名間加空白（`data/surnames.tsv`）；沒人用的頭像標 `group`：事件人物 10 位（附名字）、新君主／新武將男女 |
 | `verify_scenarios.py` | 6 劇本：劇本載入器跑完（`$1BCB4`）時 dump RAM，與 rom.py 逐欄比對 |
 | `verify_persons.py` | 改寫 RAM 的州人物串列，讓劉備的武将一覧列出 531 人；用遊戲字型從截圖讀回姓名與 7 個數值 |
 | `verify_text.py` | 同上，但先把 ROM 的人名換成字型的每個碼（2 輪），逐格比對畫出的 16 × 16 字形 |
 | `verify_faces.py` | 遊戲自己的頭像程式組出全部頭像（`$F466` 迴圈），逐 byte 比對；再比對 3 張頭像的 VRAM、CRAM、截圖 |
 | `verify_map.py` | 密偵畫面：大地圖 tile、調色盤、plane B name table、州標記、截圖 |
 | `verify_tactical.py` | 呼叫遊戲的戰場載入程式 `$47F20` 68 次，逐 byte 比對 |
-| `verify_kaodata_export.py` | 資料集用參考渲染器畫出來，和 `Rom.face_rgb` 逐 pixel 比對；checksums |
+| `verify_kaodata_export.py` | 資料集用參考渲染器畫出來，和 `Rom.face_rgb`（CD 版的臉和 `cd.Disc`）逐 pixel 比對；checksums |
+| `verify_cd_faces.py` | Mega-CD：頭像碼寫進君主選擇畫面的 8 個君主，比對 VRAM（全部 618 格） |
+| `verify_cd_scenarios.py` | Mega-CD：7 劇本載入後的工作 RAM 與 `SINARIO.DAT` 比對（人物、州） |
 
 ## 輸出（`san3/output/`）
 
@@ -65,6 +73,7 @@ KOEI，1992.AUG，MD（1.5 MB，68000 C 編譯，大端序）。6 個劇本，46
 - ✓ 頭像：一般 307 張（2 組調色盤）、合成臉 13 型；kaodata `san3-md`
 - ✓ 大地圖：name table、tile、調色盤、州格
 - ✓ 戰場 68 筆（資料；與 SFC 相同）
+- ✓ Mega-CD 版：7 劇本（人物、州）、頭像 618 格與合成臉碼表，模擬器驗證，kaodata 匯出（未交）
 - … 未解：戰場畫面組裝、南海的地圖座標、各表的未解欄位（見 ROM_FORMAT.md §10）
 
 ## 驗證結果（2026-10-16）
@@ -77,6 +86,7 @@ KOEI，1992.AUG，MD（1.5 MB，68000 C 編譯，大端序）。6 個劇本，46
 | `verify_faces.py` | 遊戲的 `$F42C` 依序組出每個頭像，比 `$FFB004` 的 960 bytes 與調色盤號；省份畫面換成 3 張頭像比 VRAM tile `0x208`、CRAM 第 3 列 16 色、截圖 40 × 48 | 一般 307/307、合成 311/311；劉備 0xA1、77（調色盤 1、用到色 15）、0x8DA4（合成）：VRAM OK、CRAM 16/16、截圖 1920/1920 pixel，OK |
 | `verify_map.py` | 密偵畫面 | tile 0x2A1 OK、調色盤 OK、name table 794/794、州標記 45/45、截圖 48208/48208 pixel，OK |
 | `verify_tactical.py` | `$FF9014` = 0–67 逐一呼叫 `$47F20`，比 `$FFCC04` | 68/68，OK |
-| `verify_kaodata_export.py` | 參考渲染器與 `Rom.face_rgb` | 人物 532/532（合成 311）、頭像 307/307、checksums OK |
+| `verify_kaodata_export.py` | 參考渲染器與 `Rom.face_rgb` | 人物 532/532（合成 311）、頭像 307/307、checksums OK；含 CD：人物 533/533、頭像 327/327、樣貌 20 |
+| `verify_cd_faces.py`／`verify_cd_scenarios.py` | Mega-CD 版（2026-10-17），見 docs/MEGACD.md §5 | 頭像 619/619；7 劇本人物 531/531、州 46/46 |
 
 人物的 RAM 欄位另外對照畫面：劇本 1 平原 人 370000、金 2300、米 50000、兵 9500；徴兵清單 劉備 68、関羽 103（98 + 寶物 5）、張飛 99；募兵清單魅力 99、96、36。
