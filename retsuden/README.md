@@ -13,6 +13,11 @@ SEGA，1991，MD（ROM 表頭 `(C)SEGA 1991.APR`，`GM G-5510`，1MB）。非光
 .venv/bin/python retsuden/verify_scenarios.py   # 3 劇本 × 33 表，載入完成時的 RAM 比對
 .venv/bin/python retsuden/verify_persons.py     # 256 人 × 15 個數字，狀態畫面讀回
 .venv/bin/python retsuden/verify_maps.py        # 大地圖捲動，畫面上的 plane B 比對
+
+# 頭像 sheet（portrait-sheet skill；先跑 export.py）
+.venv/bin/python retsuden/sheet_manifest.py
+.venv/bin/python -I ~/.claude/skills/portrait-sheet/render.py retsuden/output/portrait-sheet/retsuden/sheet.json \
+    retsuden/output/portrait-sheet/retsuden/out
 ```
 
 ROM 預設直接讀 `roms/Sangokushi Retsuden - Ransei no Eiyuutachi (Japan).zip`；所有腳本加 `--rom "roms/San Guo Zhi Lie Zhuan - Luan Shi Qun Ying (China).zip"` 改跑中文版（依 ROM 內容自動判斷版本）。依賴：Pillow、numpy；openpyxl（可選，.xlsx）；驗證需 `mame`（`brew install mame`，不需 BIOS）。
@@ -26,6 +31,7 @@ ROM 預設直接讀 `roms/Sangokushi Retsuden - Ransei no Eiyuutachi (Japan).zip
 | `data/charset_cn.txt` | 中文版字型 1034 字的轉寫（同 bitmap 沿用日版，其餘 383 字目視） |
 | `export.py` | 匯出 CSV（UTF-8-BOM）／XLSX／PNG |
 | `verify_*.py` | 模擬器驗證（見上） |
+| `sheet_manifest.py` | 頭像 sheet 的 manifest（`portrait-sheet/1`）：256 人一人一格、片假名讀音、君主標籤，人名照 ROM（誤字不改） |
 
 ## 輸出
 
@@ -37,6 +43,7 @@ ROM 預設直接讀 `roms/Sangokushi Retsuden - Ransei no Eiyuutachi (Japan).zip
 | `portraits/P###_姓名.png` | 256 張頭像（48×64，眼開口閉；人物號＝頭像號） |
 | `font.png` | 16×16 字型總覽 |
 | `map.png`、`map_labeled.png` | 大地圖（1280×1152）、加城號與城名標註 |
+| `portrait-sheet/retsuden/` | 頭像 sheet：`sheet.json`、`faces/`、`out/retsuden-p01.png`…（6 張，交給 simagame 的 `portrait-sheets/`） |
 
 ## 進度
 

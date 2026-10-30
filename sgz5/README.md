@@ -19,6 +19,11 @@
 .venv/bin/python sgz5/verify_faces.py       # 536 張頭像逐 pixel ＋ 500 人能力值讀回（約 7 分）
 .venv/bin/python sgz5/verify_persons.py     # 500 人 × 8 個數字，武將一覽讀回（約 2 分）
 .venv/bin/python sgz5/verify_cities.py      # 7 劇本 × 47 城 × 8 個數字，城市資訊讀回（約 3 分）
+
+# 頭像 sheet（portrait-sheet skill；先跑 export.py）
+.venv/bin/python sgz5/sheet_manifest.py
+.venv/bin/python -I ~/.claude/skills/portrait-sheet/render.py sgz5/output/portrait-sheet/sgz5/sheet.json \
+    sgz5/output/portrait-sheet/sgz5/out
 ```
 
 依賴：Pillow、numpy（`tools/`）；驗證需 `mame`（不需 BIOS）。`persons.csv` 的 `[EXT]三國志V_DOS_id` 讀 `~/works/kaodata/data/san5pk-dos/dataset.json`（沒有就留空）。
@@ -31,6 +36,7 @@
 | `data/charset.txt` | 字型 7 bank × 240 字的轉寫（753 字；人名對齊三國志V 人名＋目視，其餘 〓） |
 | `export.py` | 匯出 CSV（UTF-8-BOM）／PNG |
 | `verify_*.py` | 模擬器驗證（見上） |
+| `sheet_manifest.py` | 頭像 sheet 的 manifest（`portrait-sheet/1`）：500 人、相同的臉併成一格（493 格）、基本能力值，人名照 ROM（誤字不改） |
 
 ## 輸出（`sgz5/output/`，不進版控）
 
@@ -46,6 +52,7 @@
 | `faces/` | `000_丁奉.png`…`499_*.png`（人物）、`extra_500`…`extra_535`（無人物引用） |
 | `font.png` | 字型表：7 bank × 15 列 × 16 字 |
 | `map.png`、`map_labelled.png` | 選君主畫面的地圖（plane B）；labelled 版標出 47 城節點 |
+| `portrait-sheet/sgz5/` | 頭像 sheet：`sheet.json`、`faces/`、`out/sgz5-p01.png`…（8 張，交給 simagame 的 `portrait-sheets/`） |
 
 ## 驗證結果（2026-10-16，MAME 實跑）
 
