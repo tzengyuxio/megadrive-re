@@ -36,7 +36,7 @@
 | `data/charset.txt` | 字型 7 bank × 240 字的轉寫（753 字；人名對齊三國志V 人名＋目視，其餘 〓） |
 | `export.py` | 匯出 CSV（UTF-8-BOM）／PNG |
 | `verify_*.py` | 模擬器驗證（見上） |
-| `sheet_manifest.py` | 頭像 sheet 的 manifest（`portrait-sheet/1`）：500 人、相同的臉併成一格（493 格）、基本能力值，人名照 ROM（誤字不改） |
+| `sheet_manifest.py` | 頭像 sheet 的 manifest（`portrait-sheet/1`）：500 人一人一格（493 張臉，共用的標「共用N人」，其餘「專屬」）、基本能力值，人名照 ROM（誤字不改） |
 
 ## 輸出（`sgz5/output/`，不進版控）
 
@@ -52,7 +52,7 @@
 | `faces/` | `000_丁奉.png`…`499_*.png`（人物）、`extra_500`…`extra_535`（無人物引用） |
 | `font.png` | 字型表：7 bank × 15 列 × 16 字 |
 | `map.png`、`map_labelled.png` | 選君主畫面的地圖（plane B）；labelled 版標出 47 城節點 |
-| `portrait-sheet/sgz5/` | 頭像 sheet：`sheet.json`、`faces/`、`out/sgz5-p01.png`…（8 張，交給 simagame 的 `portrait-sheets/`） |
+| `portrait-sheet/sgz5/` | 頭像 sheet：`sheet.json`、`faces/`、`out/sgz5-p01.png`…（8 張，以 B 類交接單交到 simagame 的 `inbox/`） |
 
 ## 驗證結果（2026-10-16，MAME 實跑）
 

@@ -6,8 +6,9 @@ then:  .venv/bin/python -I ~/.claude/skills/portrait-sheet/render.py \
            retsuden/output/portrait-sheet/retsuden/sheet.json retsuden/output/portrait-sheet/retsuden/out
 
 Person n uses portrait n (output/portraits/P###_姓名.png, 48x64, all different); one cell per person in person
-order, names and readings as the Japanese ROM writes them (misspellings kept), tag 君主 for the rulers of any
-of the 3 scenarios. Stats are left out: they change from scenario to scenario.
+order, names and readings as the Japanese ROM writes them (misspellings kept), a red (accent) tag 君主 for the
+rulers of any of the 3 scenarios and a quiet 武將 for the rest. Stats are left out: they change from scenario to
+scenario.
 """
 import csv
 import json
@@ -32,17 +33,15 @@ def main() -> None:
     for n, p in sorted(persons.items()):
         face = f"faces/{n:03d}.png"
         shutil.copy(os.path.join(src, "portraits", f"P{n:03d}_{p['name']}.png"), os.path.join(out, face))
-        c = {"face": face, "name": p["name"], "sub": p["sub"]}
-        if p["ruler"]:
-            c["tags"] = ["君主"]
-        chars.append(c)
+        tag = {"text": "君主", "color": "accent"} if p["ruler"] else {"text": "武將", "style": "quiet"}   # every cell tagged or none
+        chars.append({"face": face, "name": p["name"], "sub": p["sub"], "tags": [tag]})
     manifest = {"format": "portrait-sheet/1", "slug": SLUG, "game": "三國志列傳", "original": "三国志列伝 乱世の英雄たち",
                 "title_font": "lanyang-semibold", "title": "武將頭像", "platform": "SEGA　1991　Mega Drive",
                 "theme": {"base": "paper", "name_font": "sourcehan-serif", "data_font": "sourcehan-sans"},
                 "characters": chars}
     with open(os.path.join(out, "sheet.json"), "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=1)
-    print(f"{len(chars)} faces ({sum('tags' in c for c in chars)} rulers) -> {out}")
+    print(f"{len(chars)} faces ({sum(c['tags'][0]['text'] == '君主' for c in chars)} rulers) -> {out}")
 
 
 if __name__ == "__main__":

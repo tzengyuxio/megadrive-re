@@ -43,9 +43,10 @@ sources:
 ## 結果（2026-10-31）
 
 - 本 repo 以前的頭像總覽（`airmanage/output/faces.png`、`airmanage2/output/faces.png`、`genchou/output/heads.png`）都是光榮作品，依 skill 由 kaodata 從資料集做，本 repo 不重做
-- 非光榮、有頭像的兩款做了 sheet，交到 simagame（之後交件也放這兩處）：
+- 非光榮、有頭像的兩款做了 sheet，交到 simagame（由 simagame 歸檔到下列位置）：
   - `retsuden`（三國志列傳）：6 張、256 格 → `portrait-sheets/megadrive/retsuden/`
   - `sgz5`（三國志V，MD 盜版）：8 張、493 格（500 人，相同的臉併格）→ `portrait-sheets/koei/sgz5/`（光榮作品的盜版移植，歸 koei）
+- 交件一律走 simagame 的 `inbox/`（B 類交接單，每組附一個 `<slug>/` 資料夾），不直接寫 `portrait-sheets/`（2026-10-31 改）
 - 人名照遊戲原字，ROM 誤字不改（使用者 2026-10-31 決定）
 - adapter：`retsuden/sheet_manifest.py`、`sgz5/sheet_manifest.py`
 - 待使用者決定：各組 `notes.md` 的「待確認」（遊戲名、日版／中文版人名、事件人物要不要放），由 simagame 轉給使用者
