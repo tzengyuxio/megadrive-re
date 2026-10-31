@@ -36,7 +36,7 @@
 | `data/charset.txt` | 字型 7 bank × 240 字的轉寫（753 字；人名對齊三國志V 人名＋目視，其餘 〓） |
 | `export.py` | 匯出 CSV（UTF-8-BOM）／PNG |
 | `verify_*.py` | 模擬器驗證（見上） |
-| `sheet_manifest.py` | 頭像 sheet 的 manifest（`portrait-sheet/1`）：500 人一人一格（493 張臉，共用的標「共用N人」，其餘「專屬」）、基本能力值，人名照 ROM（誤字不改） |
+| `sheet_manifest.py` | 頭像 sheet 的 manifest（`portrait-sheet/1`）：500 人一人一格（493 張臉，共用的標「共用N人」，其餘「專屬」）、基本能力值；沒有人用的頭像 500–503 標 unseen（504–535 與 104–135 相同，不收），人名照 ROM（誤字不改） |
 
 ## 輸出（`sgz5/output/`，不進版控）
 
