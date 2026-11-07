@@ -7,7 +7,7 @@ code -> kanji table (superfamicom-re san2/data/kanji_ext.json, itself derived fr
 checked glyph by glyph) gives the kanji. Every pair is checked: the MD glyph must be pixel-identical to the
 SFC glyph, and the pairing must be one-to-one.
 
-Usage: .venv/bin/python san2/tools/build_kanji_map.py [--sfc-repo ~/works/superfamicom-re]
+Usage: .venv/bin/python san2/tools/build_kanji_map.py [--sfc-repo DIR] [--sfc-rom ZIP]   # defaults: tools/repos.py
 """
 import argparse
 import importlib.util
@@ -17,6 +17,8 @@ import sys
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE)
+sys.path.append(os.path.join(os.path.dirname(HERE), "tools"))
+from repos import SFC_ORIGINAL, SUPERFAMICOM_RE
 from rom import DEFAULT_ROM, KANJI_EXT, Rom
 
 
@@ -30,10 +32,11 @@ def load_sfc(repo: str):
 def main() -> None:
     ap = argparse.ArgumentParser(description="由 SFC 版的漢字碼對照推出 MD 版的對照")
     ap.add_argument("--rom", default=DEFAULT_ROM)
-    ap.add_argument("--sfc-repo", default=os.path.expanduser("~/works/superfamicom-re"))
+    ap.add_argument("--sfc-repo", default=SUPERFAMICOM_RE)
+    ap.add_argument("--sfc-rom", default=os.path.join(SFC_ORIGINAL, "Super Sangokushi II (Japan).zip"))
     args = ap.parse_args()
     sfc_mod = load_sfc(args.sfc_repo)
-    sfc = sfc_mod.Rom(os.path.join(args.sfc_repo, "roms", "Super Sangokushi II (Japan).zip"))
+    sfc = sfc_mod.Rom(args.sfc_rom)
     sfc_kanji = sfc_mod.load_kanji()
     md = Rom(args.rom)
     pairs: dict[int, int] = {}

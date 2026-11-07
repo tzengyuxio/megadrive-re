@@ -45,5 +45,20 @@ MD／Genesis 歷史策略遊戲的 ROM 逆向工程：解析人物、頭像、�
 | `m68k.py` | 用 MAME debugger 反組譯 68000 |
 | `glyph_match.py` | 以系統字型比對 16×16 字形，輔助轉寫字表 |
 | `kaodata.py`、`parts_sheet.py` | kaodata 格式的讀寫、參考渲染器、組合臉零件總覽（取自 superfamicom-re） |
+| `repos.py` | 其他 repo 的路徑（環境變數可覆寫，見下） |
+
+## 重建 output/
+
+各遊戲的 `output/` 都能從 ROM 重跑出來：
+
+```sh
+.venv/bin/python scripts/rebuild.py GAME [GAME ...] | --all [--dry-run]
+```
+
+依序跑 `export.py`（美版、中文版另跑一次，輸出到 `output/usa/`、`output/cn/`）、`*_manifest.py`，再用 portrait-sheet skill 畫頭像頁。不跑 `verify_*.py`（要開模擬器）和 `export_kaodata.py`（輸出位置通常是 kaodata repo）。全部約 1 分鐘。
+
+## 依賴其他 repo
+
+`bushou/verify_maps.py`（戰場地形和 SFC 版比對）和 `san2/tools/build_kanji_map.py`（由 SFC 版的漢字對照推出 MD 版）會讀 SFC 版的 ROM，後者還會用 superfamicom-re 的解碼程式和漢字表。兩個位置都寫在 `tools/repos.py`，可用環境變數 `SFC_ORIGINAL`（SFC ROM 所在資料夾）和 `SUPERFAMICOM_RE`（superfamicom-re 的位置）改。
 
 MD 版的分析流程與踩坑見 [docs/PLAYBOOK.md](docs/PLAYBOOK.md)。

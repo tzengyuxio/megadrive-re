@@ -7,7 +7,7 @@ cross-check the battle map terrain with the SFC version.
    0x3FC.. the 429 ROM tiles, CRAM palette 0 the ROM palette. In the screenshot every map cell not covered by
    plane A (text, daimyo crests) or a sprite (cursor) must equal map.png (map_rgb) pixel for pixel; colour 0 shows the backdrop.
 2. Battle maps: the MD has no screen for them before a battle (not reached here); their terrain bytes are compared
-   with the SFC ROM (superfamicom-re/bushou, whose verify_maps.py checked the field maps against the SFC game).
+   with the SFC ROM (tools/repos.py SFC_ORIGINAL; superfamicom-re/bushou, whose verify_maps.py checked the field maps against the SFC game).
 
 Usage: .venv/bin/python bushou/verify_maps.py [--rom ROM] [--sfc SFC_ROM]
 """
@@ -22,6 +22,7 @@ from PIL import Image
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(HERE), "tools"))
 from replay import replay
+from repos import SFC_ORIGINAL
 from rom import (
     CASTLE_COUNT,
     CASTLE_LAYER,
@@ -43,7 +44,7 @@ BOOT = ("w3500 start:10 w300 start:10 w300 c:10 w300 c:10 w300 c:10 w300 c:10 w3
         "up:6 w60 c:10 w300")  # title -> scenario 1, 1 player -> daimyo selection map
 PLANE, PLANE_W, B_ROW, B_COL = 0xE000, 32, 32, 1
 SAT = 0xDC00
-SFC_ROM = os.path.expanduser("~/works/superfamicom-re/roms/Super Nobunaga no Yabou - Bushou Fuuunroku (Japan).zip")
+SFC_ROM = os.path.join(SFC_ORIGINAL, "Super Nobunaga no Yabou - Bushou Fuuunroku (Japan).zip")
 SFC = {"field": (0x3746A, 48 * 154), "castle": (0x393B2, 49 * 143), "castle layer": (0x3B0BE, 49 * 143)}
 
 

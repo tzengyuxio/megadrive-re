@@ -32,7 +32,7 @@ MD／Genesis 遊戲的 ROM 逆向工程專案，結構比照 `~/works/famicom-re
 | runtime | `.emu/`（`tools/gpgx.py --build` 編出的 Genesis Plus GX 與 `system/`）；MAME 用 brew 安裝，經 `tools/mame.py` 呼叫 |
 | export | `<遊戲>/output/kaodata*/`：kaodata 資料集（交給 kaodata，依它的 `docs/data-format.md`） |
 | docs | 本檔、`README.md`、`BACKLOG.md`、`docs/PLAYBOOK.md`、各遊戲的 `README.md` 與 `docs/` |
-| tools | `tools/`（共用：MAME／GPGX 驅動、反組譯、kaodata 讀寫等）；各遊戲資料夾裡的 `*.py`（解碼、匯出、驗證） |
+| tools | `tools/`（共用：MAME／GPGX 驅動、反組譯、kaodata 讀寫等）；各遊戲資料夾裡的 `*.py`（解碼、匯出、驗證）；`scripts/rebuild.py`（重建各遊戲的 `output/`） |
 
 ## 上下游
 
