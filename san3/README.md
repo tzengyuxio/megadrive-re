@@ -80,7 +80,7 @@ Mega-CD 版（多了劇本「黄巾の乱」、何進取代賈範、頭像預先
 | kaodata 資料集 `san3-md` | ✅ | checksum | `verify_kaodata_export.py` |
 | 大地圖（name table、tile、調色盤、州格） | ✅ | emu | `verify_map.py` 密偵畫面截圖 48208/48208 pixel；ROM_FORMAT §7 |
 | 南海的地圖座標 | ❌ | | 見「未解」 |
-| 戰場 68 筆（資料） | ✅ | emu+modified+cross | `verify_tactical.py` 改 `$FF9014` 逐一呼叫 `$47F20` 68/68，與 SFC 版逐 byte 相同；ROM_FORMAT §8 |
+| 戰場 68 筆（資料） | ✅ | emu+cross | `verify_tactical.py` 改 `$FF9014` 逐一呼叫 `$47F20` 68/68，與 SFC 版逐 byte 相同；ROM_FORMAT §8 |
 | 戰場畫面組裝 | ❌ | | 見「未解」 |
 | 文字控制碼 | ❌ | | 見「未解」 |
 | Mega-CD 版：7 劇本的人物、州（含黄巾の乱） | ✅ | emu | `verify_cd_scenarios.py` 人物 531/531、州 46/46；MEGACD §3 |

@@ -86,7 +86,7 @@ CSV 一律用 UTF-8 with BOM。
 | 頭像：專屬 134 張、組合臉 7 包 | ✅ | emu+modified | `verify_faces.py` 用 hook 讓遊戲自己解碼與組合，再 patch 換臉比對 VRAM／CRAM／畫面；ROM_FORMAT §7 |
 | 事件人物頭像 18、19、22、25、94 | 🟡 | code | 由劇情程式以固定編號畫出，18、25 依自報姓名的台詞命名；ROM_FORMAT §7.1 |
 | kaodata 資料集 `koukai2-md` | ✅ | checksum | `verify_kaodata_export.py` |
-| 世界地圖的區塊與 metatile | ✅ | emu+modified+cross | `verify_maps.py` 用 hook 呼叫 `$3C470` 展開 4050 塊，且和 SFC 版逐 byte 相同；ROM_FORMAT §9 |
+| 世界地圖的區塊與 metatile | ✅ | emu+cross | `verify_maps.py` 用 hook 呼叫 `$3C470` 展開 4050 塊，且和 SFC 版逐 byte 相同；ROM_FORMAT §9 |
 | 世界地圖的 tile 圖形與色盤 | ❌ | | 見「未解」 |
 | 艦隊 | ❌ | | 見「未解」 |
 | 劇情、訊息文字 | ❌ | | 見「未解」 |
