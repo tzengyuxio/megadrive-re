@@ -67,14 +67,41 @@ Mega-CD 版（多了劇本「黄巾の乱」、何進取代賈範、頭像預先
 
 ## 進度
 
-- ✓ 文字：Shift-JIS＋外字 48 字；字型 2150 字、半形字
-- ✓ 人物 532 人；6 劇本的人物、州、勢力、header、extra、寶物持有者
-- ✓ 州名、寶物、州的地圖座標（45／46）
-- ✓ 頭像：一般 307 張（2 組調色盤）、合成臉 13 型；kaodata `san3-md`
-- ✓ 大地圖：name table、tile、調色盤、州格
-- ✓ 戰場 68 筆（資料；與 SFC 相同）
-- ✓ Mega-CD 版：7 劇本（人物、州）、頭像 618 格與合成臉碼表，模擬器驗證，kaodata 已收
-- … 未解：戰場畫面組裝、南海的地圖座標、各表的未解欄位（見 ROM_FORMAT.md §10）
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 文字與字型（Shift-JIS、外字 48 字、字型 2150 字） | ✅ | emu+modified | `verify_text.py` 把人名換成字型的每個碼，截圖逐格比對 2149/2149；ROM_FORMAT §2 |
+| 人物表：姓名、生年、陸指 水指 武力 智力 政治 魅力 | ✅ | emu+modified | `verify_persons.py` 改寫州的人物串列，從武将一覧讀回 531/531；ROM_FORMAT §4.1 |
+| 人物表：野心 運 冷静 勇猛、相性、義理、血縁 | 🟡 | cross | 人物表除合成頭像碼與 1 人姓名外和 SFC 版相同，欄位意義沿用 SFC，MD 畫面沒有對照；ROM_FORMAT §4.1 |
+| 6 劇本（header、州、勢力、人物、extra、寶物持有者） | ✅ | emu | `verify_scenarios.py` 在 `$1BCB4` dump RAM 逐欄比對；ROM_FORMAT §3 |
+| 劇本州的人口、金、米與兵士 | 🟡 | capture | 只對照了劇本 1 平原一州的畫面（人 370000、金 2300、米 50000、兵 9500）；ROM_FORMAT §5.2 |
+| 州名與大地圖座標（45／46 州） | ✅ | emu | `verify_map.py` 州標記 45/45；ROM_FORMAT §5.1、§7 |
+| 寶物（種類、加算、持有者） | 🟡 | capture | 加算值只用徴兵清單驗證了青竜偃月刀；ROM_FORMAT §5.4 |
+| 頭像：一般 307 張（2 組調色盤）＋合成臉 13 型 | ✅ | emu+modified | `verify_faces.py` 呼叫遊戲的頭像程式組出全部頭像，再換 3 張比對 VRAM／CRAM／截圖；ROM_FORMAT §6 |
+| kaodata 資料集 `san3-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 大地圖（name table、tile、調色盤、州格） | ✅ | emu | `verify_map.py` 密偵畫面截圖 48208/48208 pixel；ROM_FORMAT §7 |
+| 南海的地圖座標 | ❌ | | 見「未解」 |
+| 戰場 68 筆（資料） | ✅ | emu+modified+cross | `verify_tactical.py` 改 `$FF9014` 逐一呼叫 `$47F20` 68/68，與 SFC 版逐 byte 相同；ROM_FORMAT §8 |
+| 戰場畫面組裝 | ❌ | | 見「未解」 |
+| 文字控制碼 | ❌ | | 見「未解」 |
+| Mega-CD 版：7 劇本的人物、州（含黄巾の乱） | ✅ | emu | `verify_cd_scenarios.py` 人物 531/531、州 46/46；MEGACD §3 |
+| Mega-CD 版：`SINARIO.DAT` 的勢力、header | ❌ | | 見「未解」 |
+| Mega-CD 版：頭像 618 格與合成臉碼表 | ✅ | emu+modified | `verify_cd_faces.py` 把頭像碼寫進 8 個君主的記錄比對 VRAM，619/619；MEGACD §4 |
+| Mega-CD 版：頭像在畫面上的顏色 | 🟡 | code | 調色盤與卡帶版相同，沒有逐張驗證畫面顏色；MEGACD §4 |
+| Mega-CD 版：kaodata 併入 `san3-md` | ✅ | checksum | `verify_kaodata_export.py`（含 CD 人物 533/533）；MEGACD §6 |
+| Mega-CD 版：其他光碟檔案（開場、戰場 `HEX*`、事件動畫等） | ❌ | | 見「未解」 |
+
+## 未解
+
+- 人物表 +3、+4；劇本人物身分 bit 7、身分 5–7 的差別（ROM_FORMAT §4、§10）
+- 州名 +0、+1、+22–25；南海的 4 個 word（`135 262 30 0`，不是座標）；地圖州格 (28, 1) 與 tile `0x3BC`（ROM_FORMAT §5.1、§10）
+- 劇本州 +2（推測軍師）、+10–12、+14、+20–28（ROM_FORMAT §5.2、§10）
+- 勢力 +3、+4–24（推測關係）；header +2、+22–32；`0x800E4` 的 22 × 6 bytes（ROM_FORMAT §3、§5.3、§10）
+- 寶物 +1、+2、+4；加算值只驗證青竜偃月刀；持有者 600、601（ROM_FORMAT §5.4、§10）
+- header 旗色在 MD 大地圖上的用法（SFC 版已驗證是旗標，MD 的州標記是動態畫的，沒有追）（ROM_FORMAT §3、§10）
+- 戰場畫面組裝；戰場 46–67 的用途；`0x9D0E0`、`0xD2174`、`0xD3C1C` 的內容（ROM_FORMAT §8、§9、§10）
+- 文字控制碼（`%d`／`%s`、`ESC C n` 換色等只看到格式字串）（ROM_FORMAT §10）
+- Mega-CD 版：`SINARIO.DAT` `+0xE0C` 起的勢力、header 等（MEGACD §3、§7）
+- Mega-CD 版：光碟上其他檔案（MEGACD §1、§7）
 
 ## 驗證結果（2026-10-16）
 

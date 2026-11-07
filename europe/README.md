@@ -53,11 +53,28 @@ name 都是 ROM 裡畫在頭像旁的字。
 
 ## 進度
 
-- ✓ 劇本 6 個：區塊與 RAM 完全一致；將領、領袖、經歷、都市、兵器（欄位沿用 SFC 研究，資料逐欄相同）
-- ✓ 頭像 120 張，含 100–119 的用途；kaodata `europe-md`
-- ✓ 戰場地形與格碼詞（RAM 驗證）
-- 戰場畫面（格碼詞 → tile）、歐洲地圖（選單背景）未做
-- 未解：見 ROM_FORMAT.md「未解」
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 劇本 6 個（區塊複製） | ✅ | emu | `verify_scenarios.py` 在 `$9E06` 比對 RAM 區塊 9365/9365 bytes；ROM_FORMAT「劇本」 |
+| 將領、領袖、經歷、都市、兵器 | ✅ | cross | 和 SFC 版 `rom.py` 逐欄相同；欄位意義沿用 SFC 研究，兵器 +5／+6 是推測；ROM_FORMAT「劇本」「兵器」 |
+| 頭像 120 張 | ✅ | emu | `verify_faces.py` 比對 VRAM／CRAM／截圖；ROM_FORMAT「頭像」 |
+| 頭像 100–119 的用途 | 🟡 | code | 依畫它們的程式（`$3185A`、`$30E60`、`$1FC90` 等）判定；ROM_FORMAT「頭像」 |
+| kaodata 資料集 `europe-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 戰場地形 6 張 | ✅ | emu | `verify_scenarios.py` 在 `$9E4C` 比對地形 1600/1600；ROM_FORMAT「戰場地圖」 |
+| 戰場格碼詞 | ✅ | emu | `verify_scenarios.py` 在戰場畫面比對 3200/3200 bytes；ROM_FORMAT「戰場地圖」 |
+| 戰場畫面（格碼詞 → tile） | ❌ | | 見「未解」 |
+| 歐洲地圖（選單背景） | ❌ | | 見「未解」 |
+
+## 未解
+
+- 戰場格碼詞 → tile／調色盤的組成；格碼詞已在 RAM `$FF6D30` 驗證（ROM_FORMAT「戰場地圖」）
+- 歐洲地圖（選單背景）沒做（ROM_FORMAT「未解」）
+- 部隊（師団／連隊）結構、勝利條件、劇本 header +5 以後（ROM_FORMAT「劇本」）
+- 將領 +12 +13 +14 +19 +21（ROM_FORMAT「將領表」）
+- 兵器 +5 登場時期、+6 種別名稱只是推測，+11 +12 +14 未解（ROM_FORMAT「兵器」）
+- 都市第二組三值、駐軍槽後 2 bytes、+64 其餘位元（ROM_FORMAT「都市」）
+- 地形 high nibble（ROM 裡 0 或 8）；兵器名 `$` `'` 在 MD 畫面上的字形（ROM_FORMAT「戰場地圖」「文字」）
+- 副官（頭像 106–117）升任替補指揮官的流程未追（ROM_FORMAT「頭像」）
 
 ## 驗證結果
 

@@ -47,12 +47,27 @@ kaodata 資料集 `royal-md`（遊戲代碼 ROYAL，平台 MD）：64 人、91 �
 
 ## 進度
 
-- ✓ 劇本 4 個：ROM 表與 RAM 完全一致；人物、家、領地欄位（和 FC 研究對齊，資料逐欄相同）
-- ✓ 名稱表：人物、領地（相鄰、標記格）、部隊、家名；可選家当主表
-- ✓ 頭像 91 張（人物 64、相談役 4、部隊 23）；kaodata `royal-md`
-- ✓ 主畫面版面與戰略地圖
-- 戰場：只有地形表，畫面組成未解
-- 未解：見 ROM_FORMAT.md §7
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 劇本 4 個（家、人物、領地區塊） | ✅ | emu+cross | `verify_scenarios.py` 載入後 RAM 2134/2134 bytes 相同，資料和 FC 版逐欄相同；ROM_FORMAT §3 |
+| 名稱表：人物、領地（相鄰、標記格）、部隊、家名 | ✅ | cross | `export.py` 輸出和 FC 版 CSV 逐欄比對 0 差異；ROM_FORMAT §4 |
+| 可選家当主表 | 🟡 | code | 選家畫面程式（`$1EC90` 一帶）讀這張表；ROM_FORMAT §4 |
+| 部隊表的數值 | 🟡 | cross | 資料和 FC 版相同，`+11`／`+12` 攻防只是推測；ROM_FORMAT §4 |
+| 頭像 91 張（人物 64、相談役 4、部隊 23） | ✅ | emu | `verify_faces.py` 比對 VRAM／CRAM／截圖；ROM_FORMAT §5 |
+| kaodata 資料集 `royal-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 主畫面版面與戰略地圖 | ✅ | emu | `verify_map.py` 比對 tile、CRAM、window plane 與截圖；ROM_FORMAT §6 |
+| 戰場地形 30 張 | ✅ | cross | 和 FC 版 `0x26A66` 逐 byte 相同；ROM_FORMAT §4 |
+| 戰場畫面 | ❌ | | 見「未解」 |
+
+## 未解
+
+- 劇本 header 除年數差外的欄位；家槽旗標（`+3`）（ROM_FORMAT §3、§7）
+- 人物 `+10`（一族，推定）、`+11`；姓名表 `+16`（ROM_FORMAT §3.1、§4、§7）
+- 領地 `+13..15` 旗標、`+16..18`、`+20..21`，部隊槽末位元組（ROM_FORMAT §3.2、§7）
+- 部隊表 `+11`／`+12`（攻防?）、`+16`、`+17`（ROM_FORMAT §4、§7）
+- 魔術師（魔術類部隊）與寶石的歸屬、事件資料（ROM_FORMAT §7）
+- 戰場畫面的組成，只有地形表（ROM_FORMAT §7）
+- 第二張主畫面版面（`0x505B0`）的用途，還沒在遊戲中對到（ROM_FORMAT §6、§7）
 
 ## 驗證結果
 

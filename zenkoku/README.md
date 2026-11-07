@@ -48,13 +48,25 @@ kaodata 資料集 `nobu2-md`（遊戲代碼 NOBU2，平台 MD）：68 人、73 �
 
 ## 進度
 
-- ✓ 劇本 4 個：載入程式與來源表（RAM 完全一致）、開始年、大名數
-- ✓ 大名 6 項、國 13 項的欄位意義（情報畫面）；人物 68 人
-- ✓ 頭像 73 張；kaodata `nobu2-md`
-- ✓ 大地圖：50／17 國 bitmap、開局上色（flood fill＋花紋）
-- ✓ 美版：同上全部（共用 `rom.py`）
-- 戰場：只有地形表（和 SFC 相同），畫面組成未解
-- 未解：見 ROM_FORMAT.md §9
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 劇本 4 個（載入程式與來源表、開始年、大名數） | ✅ | emu | `verify_scenarios.py` 載入後 RAM 7474/7474 bytes 相同；ROM_FORMAT §3.1 |
+| 大名年齢＋5 能力、國 12 項數值 | ✅ | emu+modified | `verify_persons.py` 把每筆記錄寫進 slot 24 讀自国情報畫面，含 2 輪自訂值；ROM_FORMAT §3.3 |
+| 國的 Unk24 | ❌ | | 見「未解」 |
+| 人物 68 人（姓名、人物 id） | ✅ | cross | 資料和 SFC 版逐欄相同；ROM_FORMAT §3.2 |
+| 頭像 73 張 | ✅ | emu+modified | `verify_faces.py` 換 slot 24 的人物 id 比對 VRAM／CRAM／截圖；ROM_FORMAT §4 |
+| kaodata 資料集 `nobu2-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 大地圖：50／17 國 bitmap、開局上色 | ✅ | emu | `verify_maps.py` 4 劇本開局 bitmap 19200/19200 bytes、調色盤一致；ROM_FORMAT §5 |
+| 戰場地形 50 張 | ✅ | cross | 和 SFC／FC 版逐 byte 相同；ROM_FORMAT §6 |
+| 美版（同上全部） | ✅ | emu | 四支驗證腳本加 `--rom` 跑美版全部通過；ROM_FORMAT §7 |
+| MD 戰場畫面 | ❌ | | 見「未解」 |
+
+## 未解
+
+- `$1130`（每國 1 byte，多為 1）、國記錄的 Unk24（開局後遊戲會改）、區塊 1 的其他區域（ROM_FORMAT §3.1、§3.2、§9）
+- `0x2F4CC` 的 67-word 表（SFC 也未解的 `0x3D482`）、國名標籤與旗子位置（ROM_FORMAT §5、§9）
+- MD 戰場畫面的組成與水面動畫；地形表已和 SFC 相同，沒在 MD 上跑到合戰（ROM_FORMAT §6、§9）
+- 姫（頭像 68–72）的名字；事件、相場、戰鬥規則（ROM_FORMAT §4、§9）
 
 ## 驗證結果
 

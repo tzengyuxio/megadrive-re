@@ -55,13 +55,28 @@ KOEI，1991.OCT，MD（1 MB，無壓縮，68000 C 編譯，大端序）。2 個�
 
 ## 進度
 
-- ✓ 文字碼（含跳脫碼 `85F0–85F2`）、字型 868 字、外字
-- ✓ 劇本 2 個：國 48 × 72、茶器 48 × 20、大名 48 × 34、武將 272 × 40、登場武將 30 bytes
-- ✓ 頭像：專屬 204 張、組合臉 8 頭（區域表 `0x5DB1E`），單一調色盤；kaodata 資料集 `nobu4-md`
-- ✓ 大地圖：plane B tilemap、CHR、調色盤
-- ✓ 戰場地形 48＋49 張、第二層、戰場名（與 SFC 逐 byte 相同）
-- … 推定：登場武將表（未在遊戲中等到登場）
-- … 未解：MD 戰場畫面組裝、國 +2/+42/+44/+68、大名關係表與 +31/+32、武將 +24/+30/+31/+32、茶器的值、文字控制碼（見 ROM_FORMAT.md §9）
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 文字碼、字型 868 字、跳脫碼 `85F0–85F2` | ✅ | emu+modified | `verify_text.py` 把姓名改成每個字碼比對 VRAM 點陣；ROM_FORMAT §1 |
+| 劇本 2 個（國、大名、武將、茶器區塊） | ✅ | emu | `verify_scenarios.py` RAM 與 ROM 區塊逐 byte 比對；ROM_FORMAT §2 |
+| 武將姓名與四項能力 | ✅ | emu+modified | `verify_generals.py` 讀畫面，另隨機改寫 7 人；ROM_FORMAT §2.4 |
+| 國的數值 | ✅ | capture | 對照尾張國畫面截圖（金、米、城、兵、石高）；ROM_FORMAT §2.1 |
+| 登場武將表 | 🟡 | code | 格式解出，沒有在遊戲中等到登場；ROM_FORMAT §2.5 |
+| 頭像：專屬 204 張、組合臉 8 頭 | ✅ | emu+modified | `verify_faces.py` 換頭像碼比對 VRAM／CRAM／截圖；ROM_FORMAT §3 |
+| kaodata 資料集 `nobu4-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 大地圖（plane B tilemap、CHR、調色盤） | ✅ | emu | `verify_maps.py`；ROM_FORMAT §5 |
+| 戰場地形 48＋49 張、第二層、戰場名 | ✅ | cross | 與 SFC 版逐 byte 相同（`verify_maps.py`）；ROM_FORMAT §6 |
+| MD 戰場畫面 | ❌ | | 見「未解」 |
+
+## 未解
+
+- MD 戰場畫面（野戰／城）的組裝：metatile 表、CHR、調色盤都還沒找；城第二層的意義不明（ROM_FORMAT §6、§9）
+- 國 +2、+42/+44、+68 與相鄰的高 2 bit（ROM_FORMAT §9）
+- 大名關係表 4 bit 的意義、+31、+32（ROM_FORMAT §9）
+- 武將 +24、+30、+31、+32；登場武將 +2、+23、+29（ROM_FORMAT §9）
+- 茶器的值（+18）與 +14（ROM_FORMAT §9）
+- `1B xx` 文字控制碼、外字第 867 字（ROM_FORMAT §9）
+- 季節調色盤、家紋圖、勢力地圖上色（ROM_FORMAT §9）
 
 ## 驗證結果
 

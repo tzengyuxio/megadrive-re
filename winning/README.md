@@ -24,9 +24,23 @@ KOEI，1993.JUL，Mega-CD 限定（MD 沒有卡帶版）。SFC 版（`~/works/su
 
 ## 進度
 
-- ✓ 人物：調教師、騎手、馬主、人物名（與 SFC 版比對）
-- ✓ 頭像 208、合成臉 8 型、調色盤 6 組，模擬器驗證；kaodata 已收
-- … 未解：馬（`UMAKAO.DAT`）、賽馬與其他資料（SFC 版已解，CD 版沒有重做）
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 人物名表（姓、名） | ✅ | cross | 與 SFC 版比對只有 110 的名字不同；DISC_FORMAT §2 |
+| 馬主 41、調教師 30、騎手 70 的臉碼與姓名 | ✅ | cross | 與 SFC 版全同；DISC_FORMAT §2 |
+| 騎手記錄的其他欄位 | ❌ | | 見「未解」 |
+| 頭像 208 張（含秘書） | ✅ | emu+modified | `verify_cd_faces.py` 在 `$18C6A` 改臉碼參數，比對 VRAM 與 CRAM，208/208；DISC_FORMAT §3 |
+| 合成臉 8 型 | ✅ | emu+modified | `verify_cd_faces.py` 72/72；DISC_FORMAT §3 |
+| 調色盤 6 組 | ✅ | emu+modified | `verify_cd_faces.py` 比對 CRAM 第 3 列與秘書的第 0 列；DISC_FORMAT §3 |
+| kaodata 資料集 `winning-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 馬（`UMAKAO.DAT`） | ❌ | | 見「未解」 |
+| 賽馬資料、`EVENT.DAT` 等 | ❌ | | 見「未解」 |
+
+## 未解
+
+- `UMAKAO.DAT`：馬的頭部圖，格式未解（DISC_FORMAT §1、§5）
+- `EVENT.DAT`、賽馬資料等：SFC 版已解，CD 版沒有重做（DISC_FORMAT §5）
+- 騎手記錄除臉碼與人物編號以外的欄位：格式同 SFC 版的 22 bytes 加 2 個 pad，欄位沒有對照（DISC_FORMAT §2、§5）
 
 ## 驗證結果（2026-10-17）
 

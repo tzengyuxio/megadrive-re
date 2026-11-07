@@ -54,14 +54,36 @@ kaodata 資料集 `nobu5-md`（遊戲代碼 NOBU5）：817 人，321 人用專�
 
 ## 進度
 
-- ✓ 劇本載入程式 `$1E2EE`：劇本映像（0x6F3A bytes → `$FF001A`）＋共用區（0x522 bytes → `$FF6F54`）＋1582 年的 2 byte 修正
-- ✓ 人物 44 bytes、城 42 bytes、大名 42 bytes、後登場人物 30 bytes；欄位對應 SFC 版（城名其實是 4 字，見 ROM_FORMAT.md §4.1）
-- ✓ 名稱表：國 64、官位 226、家宝 120、合戦 15、能力名 8、姫 93、地形 15；長宗我部／香宗我部外字
-- ✓ 城的大地圖位置、合戦對應城、城類（程式參照點已確認，資料與 SFC 相同）
-- ✓ 頭像：專屬 348 張＋組合臉 6 組；頭像碼 0–0x3A0（0x398、0x399 遊戲不處理）；kaodata `nobu5-md`
-- ✓ Mega-CD 版：4 劇本、頭像（28 張新增），模擬器驗證，kaodata 已收
-- 未做：大地圖、戰場地圖圖像；字型（文字是 Shift-JIS，不需要字表）
-- 未解：見 [docs/ROM_FORMAT.md](docs/ROM_FORMAT.md) §8
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 劇本載入（劇本映像＋共用區＋1582 年的修正） | ✅ | emu | `verify_scenarios.py` 3 劇本 RAM 各 29788 bytes 與 `Rom.ram_image` 相同；ROM_FORMAT §4 |
+| 人物、城、大名的欄位 | ✅ | emu+cross | 從 RAM 解碼一致，欄位意義與 SFC 版（Rev 1）解碼逐欄相同，MD 畫面沒有另外截圖；ROM_FORMAT §4.1–4.3 |
+| 後登場人物 | 🟡 | cross | 格式與資料和 SFC 版相同，沒有在模擬器裡等到登場；ROM_FORMAT §4.4 |
+| 名稱表（國、官位、家宝、合戦、能力名、姫、地形）與外字 | ✅ | cross | 內容與 SFC 版相同；ROM_FORMAT §3 |
+| 城的大地圖位置、合戦對應城、城類 | ✅ | code+cross | 程式參照點已確認，資料與 SFC 版逐 byte 相同；ROM_FORMAT §5 |
+| 頭像：專屬 348 張＋組合臉 6 組（頭像碼 927 個） | ✅ | emu+modified | `verify_faces.py` 把龍造寺隆信的人物 Id 換成每個頭像碼，比對 VRAM 與 CRAM；ROM_FORMAT §6 |
+| 沒有人物用的頭像的歸屬（姫、事件人物） | 🟡 | code | 依 `$7056` 的呼叫處與同畫面的標籤判定，仍有 11 張不明；ROM_FORMAT §6 |
+| kaodata 資料集 `nobu5-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 大地圖、戰場地圖圖像 | ❌ | | 見「未解」 |
+| Mega-CD 版：4 劇本（含 1583 年） | ✅ | emu | `verify_cd_scenarios.py` PRG-RAM 與 `SAVEDAT1`–`4.DAT` 29814 bytes 一致；MEGACD §3 |
+| Mega-CD 版：頭像（新增 28 張） | ✅ | emu+modified | `verify_cd_faces.py` 把每個 face id 寫進龍造寺隆信的記錄，專屬 376/376、組合 551/551；MEGACD §2 |
+| Mega-CD 版：後登場人物（`TAIKI.DAT`） | 🟡 | cross | 前 3 串與卡帶版逐筆相同，沒有在模擬器裡驗證；MEGACD §4 |
+| Mega-CD 版：1583 年劇本的城、大名 | ❌ | | 見「未解」 |
+| Mega-CD 版：kaodata 併入 `nobu5-md` | ✅ | checksum | `verify_kaodata_export.py`（含 CD 頭像 376/376）；MEGACD §5 |
+| Mega-CD 版：其他光碟檔案（開場、戰場、事件等） | ❌ | | 見「未解」 |
+
+## 未解
+
+- 劇本開頭區 `$FF001A–$FF01BB`、misc 區 `$FF6DD0–$FF6F53`、共用區的內容（ROM_FORMAT §4、§8）
+- 人物 +24–27、+29、+30、+32 高 4 位元、+38–40、+42–43（ROM_FORMAT §4.2、§8）
+- 大名 +4、+5–35（推測關係）、+37–39、+40（家紋，推測）（ROM_FORMAT §4.3、§8）
+- 城 +0–3、+16、+26、+41；本城旗標（推測）（ROM_FORMAT §4.1、§8）
+- 後登場人物 +1、+2、+24、+25、+28、+29；沒有在模擬器裡等到登場（ROM_FORMAT §4.4、§8）
+- 頭像 151、152、327–329、331–335、338 的用途：沒有人物用，ROM 裡找不到以常數指定的地方（ROM_FORMAT §6）
+- 大地圖（tilemap、tile、調色盤）與戰場地圖，尚未找（ROM_FORMAT §8）
+- 字型在 ROM 中的位置（文字是 Shift-JIS，不需要，未找）（ROM_FORMAT §8）
+- Mega-CD 版：1583 年劇本的城、大名沒有整理（`export.py` 只處理卡帶版）；`TAIKI.DAT` 沒有在模擬器裡驗證（MEGACD §4、§6）
+- Mega-CD 版：光碟上其他檔案（開場、戰場、事件等）（MEGACD §1、§6）
 
 ## 驗證
 

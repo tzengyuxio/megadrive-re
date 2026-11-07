@@ -48,10 +48,29 @@ kaodata 資料集 `taikoh-md`（遊戲代碼 TAIKOH，平台 MD）：716 人（�
 
 ## 進度
 
-- ✓ 名表、人物 713 筆、勢力、城、城狀態、字串表（欄位沿用 SFC 研究，資料逐欄相同）；開始時資料用遊戲 RAM 驗證
-- ✓ 頭像：專屬 258 張、組合臉 12 型（遊戲 VRAM／CRAM／畫面驗證）；kaodata `taikoh-md`
-- 大地圖：區塊表與格 byte 位置找到，未渲染；戰場地圖未找
-- 未解：見 ROM_FORMAT.md「未解」
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 文字（Shift-JIS）、名表 716 筆 | ✅ | cross | 名表與 SFC 版 713/716 相同，另 3 筆是 MD 改正 SFC 的錯字；ROM_FORMAT §2、§3 |
+| 開始時資料（勢力 20、人物 241、城狀態 123）的複製 | ✅ | emu+cross | `verify_scenarios.py` 選型畫面 RAM 與 ROM 相同（差 2 bytes 已知），並與 SFC 解碼逐欄相同；ROM_FORMAT §4 |
+| 後登場人物 472 筆 | ✅ | cross | 人物 713/713 與 SFC 解碼逐欄相同；ROM_FORMAT §4.1 |
+| 人物、勢力、城狀態的欄位意義 | 🟡 | cross | 意義沿用 SFC 研究，MD 沒有讀回畫面；居城、本城、城主為推測；ROM_FORMAT §4、§5 |
+| 城基本表 125 筆 | ✅ | cross | 與 SFC 123/125 相同，二俣、小谷的格不同；ROM_FORMAT §5 |
+| 字串表 7 個 | 🟡 | code | 由指標表解出，沒有模擬器比對；ROM_FORMAT §8 |
+| 頭像：專屬 258 張、組合臉 12 型 | ✅ | emu+modified | `verify_faces.py` 改名表 0 的頭像碼，比對 VRAM、CRAM、畫面 776/776；ROM_FORMAT §6 |
+| kaodata 資料集 `taikoh-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 大地圖區塊表與格 byte | 🟡 | cross | 區塊表與 SFC 1230/1230 相同，未渲染；ROM_FORMAT §7 |
+| 戰場地圖 | ❌ | | 見「未解」 |
+| 女性／茶人／町人表、對話文字 | ❌ | | 見「未解」 |
+
+## 未解
+
+- 人物紀錄 +14–25、+30–33、+35、+36、+47–59，位置 +2–13 的 x、y 解讀是推測（ROM_FORMAT §4.1、§9）
+- 勢力 +1–20、+22–33；城基本表 +18；城狀態 +1（推測城主）、+3–14、+16（ROM_FORMAT §4.2、§5、§9）
+- 開始時資料 `0x7A8B0`／`0x7A9F0`／`0x7AA40` 三段（對應 SFC `$203A–$2212`）與 `$FF0000–$FF003F` 的標頭（ROM_FORMAT §4、§9）
+- 大地圖：區塊表與格 byte 已找到，格 byte → tile 的表、BG 字元、調色盤未找；格 byte 和 SFC 有 489 bytes 不同（ROM_FORMAT §7、§9）
+- 戰場（合戰）地圖：沒有找，SFC 是 19 張 LZ tilemap（ROM_FORMAT §9）
+- 女性／茶人／町人表：位置未找（ROM_FORMAT §9）
+- 對話文字的腳本格式（ROM_FORMAT §9）
 
 ## 驗證結果
 

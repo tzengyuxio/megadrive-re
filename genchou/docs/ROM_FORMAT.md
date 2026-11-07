@@ -178,3 +178,19 @@ SFC 版（`~/works/superfamicom-re/genchou/docs/ROM_FORMAT.md`）的表格內容
 - 主檔表（兵科、交易品、文化名稱等）尚未整理成表。
 - 大地圖（tile 以 DMA 直接從 `0xD7700` 一帶讀，未壓縮，tilemap 未查）、戰場地圖、城內圖、事件文字都還沒看。
 - 女性頭像路徑（`$77CC`，碼＋`0x39`）只從程式讀出，沒有在后妃畫面驗證。
+
+## 下一輪候選
+
+- Mega-CD 版合成臉與 SFC 版的對照（`BACKLOG.md`）— 前置：kaodata 的 `genchou-sfc` 資料集；做法：把 `genchou-md` 頭像 118–132（CD 預先合成、差 1 個 tile 的 15 張）和 `genchou-sfc` 同碼的合成臉並排輸出對照圖（MEGACD §3、§5）
+- 女性頭像路徑 — 前置：在 `tools/drive.py` 的操作序列加上進入后妃畫面的一段；做法：把女性的頭像碼寫進 ROM 記錄，比對 VRAM 與 `rom.face_tiles`（碼＋`0x39`），結果標 modified（§5）
+- 子女頭像碼的欄位 — 前置：找到畫面上顯示子女頭像的場合；做法：改寫子女記錄最後 2 bytes，看畫面上的頭像是否跟著換（§3.4）
+- Mega-CD 版的地名與標籤位置 — 前置：`verify_cd_scenarios.py` 的開局流程；做法：用 `tools/gpgx.py` 開源平の争乱，在讀地名的地方設斷點或比對大地圖畫面，確認讀的是日本那一組（MEGACD §2）
+- 大地圖 — 前置：已有到第一回合主畫面的操作序列（§6）；做法：在主畫面 dump VRAM nametable 與 CRAM，以 `0xD7700` 一帶的 tile 反查 tilemap 的來源（§7）
+- 主檔表 — 前置：無；做法：從美版字串 `0x39B80`–`0x3A100` 的指標反查兵科、交易品的表，再依同一段程式找日版的位址（§4）
+
+## 負面結論
+
+- 用 SFC 版的 KOEI LZ（`tools/koei_lz.py`）解專屬頭像 → 對不上，MD 版是另一種壓縮（little-endian word 的前綴碼，已解成 `rom.decompress`）→ 不必重試；其他未解的壓縮資料先試 `rom.decompress`（§2）
+- Mega-CD 共通的模擬器試錯：MAME 0.289 的 `megacdj` 進不了遊戲、Genesis Plus GX 只有 Mega-CD 2 (J) v2.00 BIOS 能進遊戲 → 細節與重試條件見 `docs/PLAYBOOK.md`「Mega-CD」（各款相同，不在這裡重複）
+- Genesis Plus GX 不設 1 Mbit 備份 RAM 卡匣 → 開頭就停在「バックアップRAMカートリッジが初期化されていません」（元朝秘史要 119 blocks）→ 不必重試（`docs/PLAYBOOK.md`「Mega-CD」）
+- 用劇本 0 的家族區比對證明 Mega-CD 版開局時有複製家族區 → 開局前 INIT 的初始內容就是卡帶版劇本 1 的前兩個家族，比對結果相同也證明不了 → 開局時選一個不在初始內容裡的王家才值得重試（MEGACD §4）

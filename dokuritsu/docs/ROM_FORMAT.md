@@ -153,3 +153,14 @@ VDP：介紹頁的 plane A／B／window 都在 `0xE000`（H32、32 × 32）；�
 - 戰場：層 A 高位元、MD 的戰場 tile／組法、部隊與兵種資料。
 - 事件人物 20、21、42、43 與頭像 169–173 的身分只依 PC-98 順序推定。
 - 大量 LZ 小圖指標表的用途。
+
+## 下一輪候選
+
+- 擁有者上色遮罩 — 前置：`verify_maps.CONGRESS` 已能走到大地圖；做法：用 `tools/mame.py` 的 `install_write_tap` 監看 VRAM 資料埠，找出把色 15 改成 3／8／12 的程式，往回追遮罩來源
+- 外海動畫格位置表 — 前置：同上；做法：同樣用 write tap 抓把 tile `0x658`–`0x65B` 寫進 tilemap 的程式，再用 `on_exec` 記下它讀的位置表位址
+- MD 戰場畫面 — 前置：在 `tools/drive.py` 的操作序列裡加上打到一場戰鬥的一段；做法：在戰場畫面 dump VRAM／CRAM，用已知的層 A 地形值反查 tile 與組法
+- 体力（+27） — 前置：找到會顯示 Health 的畫面；做法：照 `verify_persons.py` 的作法改 ROM 換人讀數字（結果標 modified）
+
+## 負面結論
+
+目前沒有

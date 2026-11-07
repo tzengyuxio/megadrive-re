@@ -62,12 +62,30 @@ nameZh）、專屬頭像 174 張（頭像碼 0000–00AD）＋組合臉 4 型 ×
 
 ## 進度
 
-- ✓ 人物 250 人（畫面驗證能力與名声）、地點 53、州 15、1775 年劇本（RAM 完全一致）
-- ✓ 頭像：專屬 174＋組合臉（遊戲 VRAM／畫面驗證 312 碼）；kaodata `liberty-md`
-- ✓ 大地圖 3 區（tile、tilemap、調色盤；外海動畫格與擁有者上色另列）
-- ✓ HEX 戰場 53 張的格子資料（遊戲的 LZ 解碼器驗證，和 SFC 版逐格相同）
-- 戰場畫面、外海動畫 tile 與位置表、擁有者上色遮罩未做
-- 未解：見 ROM_FORMAT.md「未解」
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 人物 250 人：統率、戦術、指導、名声 | ✅ | emu+modified | `verify_persons.py` 改 ROM 換成每個人，讀介紹頁數字；ROM_FORMAT「人物」 |
+| 人物体力（+27） | 🟡 | code | 欄位和 SFC 對應，体力不在介紹頁，沒在畫面比過；ROM_FORMAT「人物」 |
+| 1775 年劇本（地點狀態、陣營、人物狀態） | ✅ | emu | `verify_scenarios.py` RAM 5809 bytes 和 ROM 相同；欄位意義多沿用 SFC，部分推測；ROM_FORMAT「1775 年劇本」 |
+| 地點 53 | ✅ | cross | 和 SFC 版 53/53 全欄相同；ROM_FORMAT「地點」 |
+| 州 15 | 🟡 | code | 略稱與全名指標表解出，沒在畫面比對；ROM_FORMAT「州」 |
+| 事件人物 44 筆 | 🟡 | code+capture | Hancock 在大陸會議畫面確認，空白記錄與頭像 169–173 的身分依 PC-98 順序推定；ROM_FORMAT「事件人物」 |
+| 頭像：專屬 174、組合臉 | ✅ | emu+modified | `verify_faces.py` 換 Washington 的頭像碼比對 VRAM／CRAM／截圖 312 碼；ROM_FORMAT「頭像」 |
+| kaodata 資料集 `liberty-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 大地圖 3 區（tile、tilemap、調色盤） | ✅ | emu | `verify_maps.py`，外海動畫格與擁有者上色除外；ROM_FORMAT「大地圖」 |
+| HEX 戰場 53 張的格子資料 | ✅ | emu+cross | `verify_battle_maps.py` 用遊戲的 `$3C50` 解碼，和 SFC 版 8904/8904 格相同；ROM_FORMAT「HEX 戰場」 |
+| 大地圖外海動畫格、擁有者上色 | ❌ | | 見「未解」 |
+| MD 戰場畫面 | ❌ | | 見「未解」 |
+
+## 未解
+
+- 人物 +31（bit 2–7）、+32；人物狀態 +8 低位、+9 旗標、+10–17；所屬與階級只是推測，体力沒在畫面驗證（ROM_FORMAT「人物」「1775 年劇本」「未解」）
+- 地點 +0、+1；地點狀態 +4、+8（owner）、+16；武器／弾薬的區分（ROM_FORMAT「1775 年劇本」「未解」）
+- RAM `$FF000A`、`$FF005A`、`$FF0462` 三塊與陣營 +8、資金；已知和 SFC WRAM 同順序（ROM_FORMAT「1775 年劇本」）
+- 大地圖的擁有者上色遮罩（色 15 → 3／8／12）、外海動畫格位置表與動畫 tile 來源、地點在圖上的座標（ROM_FORMAT「大地圖」）
+- MD 戰場 tile 與組法、層 A 高位元、部隊與兵種資料；格子資料已解（ROM_FORMAT「HEX 戰場」）
+- 事件人物 20、21、42、43 與頭像 169–173 的身分只依 PC-98 順序推定（ROM_FORMAT「事件人物」）
+- 大量 LZ 小圖指標表（`0x986A8` 等）的用途（ROM_FORMAT「LZ」）
 
 ## 驗證結果
 

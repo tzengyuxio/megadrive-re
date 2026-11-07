@@ -47,14 +47,27 @@ ROM 預設直接讀 `_original/md/Sangokushi Retsuden - Ransei no Eiyuutachi (Ja
 
 ## 進度
 
-- ✓ 字型與字碼（16-bit，字號＝高 byte×64＋低 byte）、小字型片假名（讀音）
-- ✓ 人物 256 名＋讀音、城名 40、武器名與加成、城座標
-- ✓ 劇本 3 個（189／200／215 年）× 33 表：載入程式 `$3E28`，RAM 完全一致
-- ✓ 人物欄位意義：狀態畫面 15 個數字全部對上（含兩種攻撃力公式）
-- ✓ 頭像 256 張（底圖＋眨眼 sprite＋嘴型），與畫面逐 pixel 一致
-- ✓ 大地圖（字典 RLE 圖塊＋分塊 nametable），捲動驗證全部一致
-- 未解：見 ROM_FORMAT.md §8
-- ✓ 中文版 `San Guo Zhi Lie Zhuan - Luan Shi Qun Ying (China)`（三國志列傳 亂世群英）：同一套程式與資料搬移位置、換成 1034 字的繁體字型；資料表與日版逐 byte 相同，沒有讀音。位址對照見 ROM_FORMAT.md §9
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 字型 968 字、字碼、小字型讀音；人物名、城名、武器名 | 🟡 | code | 字型為目視轉寫，沒有和模擬器畫出的字形比對；ROM_FORMAT §1、§2 |
+| 劇本 3 個（189／200／215 年）× 33 表 | ✅ | emu | `verify_scenarios.py` 在載入完成 `$3FF8` 比對 RAM，33/33 表一致；ROM_FORMAT §3 |
+| 人物欄位意義（狀態畫面 15 個數字、兩種攻撃力、武器加成） | ✅ | emu+modified | `verify_persons.py` 把每人的值寫進関羽的槽，從狀態畫面讀回；ROM_FORMAT §3 |
+| 頭像 256 張（底圖＋眨眼 sprite＋嘴型） | ✅ | emu+modified | `verify_faces.py` 把每張頭像換進劉備的槽，與畫面逐 pixel 比對；ROM_FORMAT §4 |
+| 大地圖（字典 RLE 圖塊＋分塊 nametable） | ✅ | emu | `verify_maps.py` 32 個停點的 plane B 全部一致；ROM_FORMAT §5、§6 |
+| 城座標 | 🟡 | code | 由 `$674DC` 讀表得知，沒有單獨驗證；ROM_FORMAT §2 |
+| 中文版（三國志列傳 亂世群英）資料表 | ✅ | emu+cross | 資料表與日版逐 byte 相同，4 支驗證腳本在中文版全部通過；ROM_FORMAT §9 |
+| 中文版字型 1034 字 | 🟡 | cross | 651 字與日版 bitmap 相同，其餘 383 字目視轉寫；ROM_FORMAT §9 |
+| 城、人物、勢力的未解欄位；官位碼對照 | ❌ | | 見「未解」 |
+| 戰場地圖、事件、劇情文字 | ❌ | | 見「未解」 |
+
+## 未解
+
+- 城欄位 `E280`–`E5A0`（6 個 long 表）：載入的 RAM 位址與大小已知，意義未解（ROM_FORMAT §3、§8）
+- 人物 `BA00`、`BC00`、`F000`（`F000` 載入時轉成 byte 值−0xB8），勢力 `E710`（ROM_FORMAT §3、§8）
+- 官位碼完整對照：只確認 4＝君主、bit 4 顯示額外稱號；田疇的官位碼異常（rank 4），原因不明（ROM_FORMAT §3、§8）
+- 大地圖調色盤第 1 組 entry 9、12 執行時會變，原因未查（ROM_FORMAT §6）
+- 戰場地圖、事件、劇情文字：未找（ROM_FORMAT §8）
+- 中文版雜項字串：`0xB352` 的 `lea $8A3C2` 指向數字、官職名、指令名等字串，未逐一整理（ROM_FORMAT §8）
 
 ## 驗證結果
 

@@ -51,12 +51,30 @@ kaodata 資料集 `air2-md`（遊戲代碼 AIR2，平台 MD，結構同 air2-sfc
 
 ## 進度
 
-- ✓ 都市 89、國家 57、地區 7、關聯事業 15：和 SFC 逐值相同
-- ✓ 劇本 4（1955／1970／1985／2000）：都市記錄、第二記錄、開局複製表、世界事件套用；ROM 與 RAM 完全一致
-- ✓ 機種 53、製造商 12（和 SFC 逐值相同）
-- ✓ 頭像 29 張圖 + 30 組調色盤、秘書／職員調色盤規則（MD 的非洲 12、中東／南美 8，和 SFC 對調）；kaodata `air2-md`
-- ✓ 世界地圖、7 張地區地圖、都市標記位置
-- 未解：劇本名（圖片）、都市記錄 3 個值、開局複製表、`0x47875`／`0x47C8C`、事件 message、機種旗標、國家代表規則未實測、頭像動畫與副本（見 ROM_FORMAT.md §8）
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 都市 89、國家 57、地區 7、關聯事業 15 | ✅ | cross | 和 SFC 版逐值相同；ROM_FORMAT §2 |
+| 劇本 4：都市記錄、第二記錄、開局複製表 | ✅ | emu | `verify_scenarios.py` 4 劇本 RAM 與 ROM（含插值）一致；ROM_FORMAT §3 |
+| 世界事件 55 筆的套用 | ✅ | emu | `verify_scenarios.py` 比對事件改過的國家與 `$FF9964`；ROM_FORMAT §3.1 |
+| 劇本名、年份範圍 | 🟡 | capture | 是圖片，名稱照畫面抄，沒有解出字串；ROM_FORMAT §3 |
+| 機種 53、製造商 12 | ✅ | cross | 和 SFC 版逐值相同，沒有在 MD 畫面另外驗證；ROM_FORMAT §2、§4 |
+| 秘書／職員調色盤規則 | ✅ | emu+modified | `verify_faces.py` 把 4 家本社搬到 7 個地區實測；ROM_FORMAT §6 |
+| 頭像 29 張圖、30 組調色盤（35 個描述） | ✅ | emu+modified | `verify_faces.py` 寫入秘書描述，比對 VRAM／CRAM／畫面；ROM_FORMAT §6 |
+| 國家代表的描述規則 | 🟡 | code | 只讀程式，沒有在遊戲中觸發；ROM_FORMAT §6 |
+| kaodata 資料集 `air2-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 世界地圖、7 張地區地圖、都市標記 | ✅ | emu | `verify_maps.py` 比對 tile、CRAM、plane B、畫面與 89 個標記；ROM_FORMAT §5 |
+| 頭像動畫格式、頭像副本 | ❌ | | 見「未解」 |
+| 字型、訊息文字、機體圖等其他圖形 | ❌ | | 見「未解」 |
+
+## 未解
+
+- 劇本名、年份範圍是 KOEI LZ 圖片，沒有解出字串，只照畫面抄（ROM_FORMAT §3、§8）
+- 都市記錄 byte 1–3、第二記錄 byte 0 的意義（同 SFC）；`$FF9964`、`$FF25B8`、`$FF23F0`、`$FF9858` 的內容；`0x47875`、`0x47C8C`（ROM_FORMAT §2、§3、§8）
+- 世界事件的 message 欄（ROM_FORMAT §3.1、§8）
+- 機種 byte 10 旗標、生產終了年（推測，同 SFC）、價格規則；機種與關聯事業沒有在 MD 畫面驗證（ROM_FORMAT §4、§8）
+- 國家代表的描述規則只讀程式，沒有在遊戲中觸發（ROM_FORMAT §6、§8）
+- 頭像動畫的格式（各 kind 的幀數、tile 對應）；頭像副本 `0xA775C` 等的用途（ROM_FORMAT §6、§8）
+- 字型、訊息文字的完整表；機體圖、指令圖示等其他圖形（ROM_FORMAT §8）
 
 ## 驗證結果
 

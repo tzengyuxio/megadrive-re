@@ -150,3 +150,14 @@ ROM：`Daikoukai Jidai (Japan).zip`，1 MB（1,048,576 bytes），SHA-1 `a4552b2
 | `$ACFC` / `$AE36` | 組合臉 |
 | `$386F4` | 色盤 → CRAM line |
 | `$3873E` | 頭像 tile → VRAM |
+
+## 下一輪候選
+
+- 港町圖 — 前置：`verify_persons.py` 已能開新遊戲到リスボン；做法：在港町畫面 dump VRAM／CRAM 與 plane，反查 tile 與 map 在 ROM 的位置
+- 初始區塊 `+0x000` 記錄 — 前置：已知到リスボン時 +9..+11 會變；做法：用 `tools/replay.py` 在進不同港、經過不同天數時讀 RAM，對照交易所畫面的行情
+- 序幕的文字 — 前置：序幕畫面的幀數（`verify_faces.py` 已用到序幕）；做法：在序幕顯示文字時 dump VRAM，看字形是 tile 圖還是另一套字型，再追載入它的程式
+- 船種名表的讀取 — 前置：船種名會出現在造船所選單；做法：在 `tools/mame.py` 的 Lua 加上讀取 watchpoint（目前沒有），在造船所畫面監看 `0xDA43A` 一帶，找出讀它的程式與基底
+
+## 負面結論
+
+- 找船種名表 `0xDA43A` 的直接引用 → ROM 裡沒有引用它的位址，推測是從其他表的基底加位移讀取（ROM_FORMAT §3）→ 能在模擬器監看讀取，或找到相鄰表的基底時才值得再找

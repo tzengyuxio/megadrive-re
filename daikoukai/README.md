@@ -77,10 +77,24 @@ CSV 一律用 UTF-8 with BOM。
 
 ## 進度
 
-- [x] 文字、初始資料區塊、女性、國名、港口、名稱表
-- [x] 頭像：專屬與組合，模擬器驗證
-- [x] 世界地圖：模擬器驗證
-- [x] kaodata 資料集
-- [ ] 港町圖
-- [ ] 未解欄位：初始區塊 `+0x000` 的記錄、艦隊 bytes 4–17、能力 bytes 6–9、港口屬性的 byte2／byte4
-- [ ] 序幕等畫面的文字（不在字串表裡）
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 文字（半形假名、`ESC K`／`ESC H`） | ✅ | cross | 解出的人物、女性、名稱表、港名和 SFC 版完全一致；ROM_FORMAT §1 |
+| 初始資料區塊（人物 41、艦隊位置、能力、建物旗標） | ✅ | emu | `verify_persons.py` 4630/4635 bytes 一致，差的 5 bytes 是主角重擲的能力；ROM_FORMAT §2 |
+| 女性 20、國名、港口 70、港口屬性、名稱表 | ✅ | cross | 和 SFC 版完全一致；ROM_FORMAT §3 |
+| 頭像：專屬 53 張、組合臉 4 頭型 | ✅ | emu+modified | `verify_faces.py` 把序幕讀頭像碼的指令 patch 成固定碼，比對 VRAM／CRAM／畫面 73/73；ROM_FORMAT §4 |
+| 沒有人物使用的頭像 1–12 的身分 | 🟡 | code | 依呼叫處與附近的 ROM 文字判斷，頭像 4 只推定為道具屋；ROM_FORMAT §4.3 |
+| kaodata 資料集 `koukai-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 世界地圖 | ✅ | emu+modified | `verify_maps.py` 把艦隊移到測試 chunk，比對 name table、CRAM、畫面 5/5；ROM_FORMAT §5 |
+| 港町圖 | ❌ | | 見「未解」 |
+| 序幕等畫面的文字 | ❌ | | 見「未解」 |
+
+## 未解
+
+- 港町圖：建物的 tile、map、色盤都還沒找（ROM_FORMAT §6）
+- 初始區塊 `+0x000` 的 20 筆 0x36 bytes 記錄（到リスボン時 +9..+11 會被改寫，推測是行情）（ROM_FORMAT §2、§6）
+- 艦隊 bytes 4–17、能力 bytes 6–9（ROM_FORMAT §2、§6）
+- 港口屬性的 byte2、byte4；道具欄 0xFF 代表沒有是推定（ROM_FORMAT §3、§6）
+- 船種名表 `0xDA43A` 怎麼被讀取：沒有直接引用（ROM_FORMAT §3、§6）
+- 序幕等畫面的文字不在字串表裡，推測是另一套字型或圖形（ROM_FORMAT §1、§6）
+- 頭像 4 的身分：推定為道具屋，ROM 裡找不到店名（ROM_FORMAT §4.3、§6）

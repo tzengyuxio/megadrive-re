@@ -56,13 +56,30 @@ CSV 和 SFC 版的匯出逐欄相同（漢字碼欄除外，MD 的字碼不同�
 
 ## 進度
 
-- ✓ 字型（16 × 16，含跳脫碼）與人名 387 個漢字碼
-- ✓ 人物 352 人：讀音、7 項能力、親族、生年、頭像碼；每劇本的所在州、身分、忠誠、初期兵士、登場年
-- ✓ 6 劇本 × 41 州：金、兵糧、人口、勢力、土地、民忠、治水、馬、信；州相鄰表
-- ✓ 頭像：專屬 208 張（11 張和 SFC 不同）、組合臉（8 頭型 × 5 區域 × 4 記錄，4 組調色盤）；kaodata 資料集 `san2-md`
-- ✓ 大地圖（ROM 的 tilemap ＋ tile）
-- ✓ 41 張戰場（13 × 12 六角格，7 種地形）與全中國拼接
-- … 未解：劇本標頭後 18 bytes、選單／訊息文字、佈陣圖、勢力旗與州號位置、道具／事件（ROM_FORMAT.md §10）
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 字型 16 × 16、跳脫碼、人名 387 個漢字碼 | ✅ | emu+modified+cross | `verify_text.py` 以 ROM patch 換人名比對 VRAM 字形 388/388，字形與 SFC 387/387 逐點相同；ROM_FORMAT §3 |
+| 6 劇本 × 41 州（金、兵糧、人口、勢力、土地、民忠、治水、馬、信） | ✅ | emu+cross | `verify_scenarios.py` 州 41/41 × 6，246 筆與 SFC 逐欄相同；ROM_FORMAT §2 |
+| 州相鄰表、大地圖游標格 | ✅ | cross | 與 SFC 版相同；ROM_FORMAT §2、§9 |
+| 人物能力、每劇本的勢力、忠誠、兵士 | ✅ | emu+cross | `verify_scenarios.py` 比對 RAM 的人物 24-byte 記錄全部相符；ROM_FORMAT §4 |
+| 人物讀音、義理等 4 項、親族、生年、登場年 | ✅ | cross | 與 SFC 版逐 byte 相同（讀音 352/352、配置 352/352）；ROM_FORMAT §4 |
+| 頭像：專屬 208 張、組合臉 8 頭型 | ✅ | emu+modified | `verify_kaodata_export.py` 把袁術的頭像碼換成每個碼，比對畫面、VRAM、CRAM 384/384；ROM_FORMAT §6 |
+| kaodata 資料集 `san2-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 大地圖（tilemap、tile、調色盤） | ✅ | emu | `verify_maps.py` 開戰選州畫面比對，不符的 55 格是州號／旗子／視窗；ROM_FORMAT §5 |
+| 41 張戰場與地形 tile | ✅ | emu+modified+cross | `verify_maps.py` 把每張戰場換進州 20 開戰比對 41/41，內容與 SFC 相同；ROM_FORMAT §7 |
+| 選單／訊息文字 | ❌ | | 見「未解」 |
+| 佈陣圖、勢力旗、州號位置、道具／事件 | ❌ | | 見「未解」 |
+
+## 未解
+
+- 劇本標頭年之後的 18 bytes、配置表 `+1`（ROM_FORMAT §2、§4.3、§10）
+- 選單／訊息文字的編碼與位置：人名的漢字碼已解，假名訊息還沒找到（ROM_FORMAT §3、§10）
+- 佈陣 nibble 圖 `0x4705A`：和 SFC／FC 版相同，意義未解（ROM_FORMAT §8、§10）
+- 勢力旗的圖與位置表、州號標籤的位置表：州號 tile 在 `0x68CF0`，放置位置未找（ROM_FORMAT §5、§10）
+- `0x48698` 起疑似視窗框表，未細看（ROM_FORMAT §8）
+- 11 張重繪頭像的來由：MD 版自己的修改，沒有對照（ROM_FORMAT §6、§10）
+- 戰爭觀看設定的效果（ROM_FORMAT §10）
+- 道具、事件表（ROM_FORMAT §10）
 
 ## 驗證
 

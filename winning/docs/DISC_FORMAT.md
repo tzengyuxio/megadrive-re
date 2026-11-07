@@ -69,3 +69,14 @@ KOEI，Mega-CD（系統區 `1993.JUL`、序號 `GM T-76044`）。只有 Mega-CD 
 
 - `UMAKAO.DAT`（馬）、`EVENT.DAT`、賽馬資料等（SFC 版已解的部分沒有在 CD 版重做）
 - 騎手記錄除臉碼與人物編號以外的欄位（格式同 SFC 版）
+
+## 下一輪候選
+
+- 騎手記錄的欄位 — 前置：SFC 版（`~/works/superfamicom-re/winning`）騎手記錄的欄位表；做法：照「SFC 22 bytes＋+15、+19 兩個 pad」逐欄對應，再用 `tools/gpgx.py` 在騎手詳情畫面對照數值（§2）
+- 賽馬與其他資料 — 前置：SFC 版已解的表；做法：拿 SFC 版解出的記錄（改成大端序、Shift-JIS）在 `SMAIN.PRG`、`SNDAT.DAT`、`EVENT.DAT` 裡搜尋，定位表格（§1、§5）
+- 馬的頭部圖 — 前置：SFC 版的馬頭部圖解碼；做法：比照 `ORGKAO.DAT` 的 1,024-byte 格試讀 `UMAKAO.DAT`，再在顯示馬的畫面用 `tools/gpgx.py` 比對 VRAM（§1）
+
+## 負面結論
+
+- Mega-CD 共通的模擬器試錯：MAME 0.289 的 `megacdj` 進不了遊戲、Genesis Plus GX 只有 Mega-CD 2 (J) v2.00 BIOS 能進遊戲 → 細節與重試條件見 `docs/PLAYBOOK.md`「Mega-CD」（各款相同，不在這裡重複）
+- 主選單長按方向鍵移動游標 → 沒有反應（游標也看不出來）→ 不必重試，短按 8 幀再按 C 才選得到（`docs/PLAYBOOK.md`「Mega-CD」）

@@ -78,11 +78,25 @@ CSV 一律用 UTF-8 with BOM。
 
 ## 進度
 
-- [x] 文字、初始資料區塊、船種規格、字串表
-- [x] 頭像：專屬與組合，模擬器驗證
-- [x] 世界地圖：區塊與 metatile，模擬器驗證
-- [x] kaodata 資料集
-- [ ] 世界地圖的 tile 圖形與色盤（`$1256A` 依緯度帶選 palette line，`$122FA` 從 `0x8FA5A` 載入色盤）
-- [ ] 艦隊（INIT `+0x1774` 起，結構和 SFC 不同）
-- [ ] 未解欄位：人物 +17／+25／+26／+28／+29、船種與規格的意義、港的狀態的一部分
-- [ ] 劇情、訊息文字（`0x97000` 起的指標表）
+| 項目 | 狀態 | 證據 | 說明 |
+|------|------|------|------|
+| 文字（半形假名混 Shift-JIS） | ✅ | cross | 字串解出來和 SFC 版相同（道具說明、發見物的差異見 ROM_FORMAT §8）；ROM_FORMAT §1 |
+| 初始資料區塊（人物 120、VIP 20、女性 30、船種 25、港 130、交易港狀態、道具） | ✅ | emu | `verify_scenarios.py` 28236/28236 bytes 與 RAM 相同；ROM_FORMAT §2–§5 |
+| 船種規格、字串表 | ✅ | cross | 和 SFC 版完全一致；ROM_FORMAT §3、§6 |
+| 頭像：專屬 134 張、組合臉 7 包 | ✅ | emu+modified | `verify_faces.py` 用 hook 讓遊戲自己解碼與組合，再 patch 換臉比對 VRAM／CRAM／畫面；ROM_FORMAT §7 |
+| 事件人物頭像 18、19、22、25、94 | 🟡 | code | 由劇情程式以固定編號畫出，18、25 依自報姓名的台詞命名；ROM_FORMAT §7.1 |
+| kaodata 資料集 `koukai2-md` | ✅ | checksum | `verify_kaodata_export.py` |
+| 世界地圖的區塊與 metatile | ✅ | emu+modified+cross | `verify_maps.py` 用 hook 呼叫 `$3C470` 展開 4050 塊，且和 SFC 版逐 byte 相同；ROM_FORMAT §9 |
+| 世界地圖的 tile 圖形與色盤 | ❌ | | 見「未解」 |
+| 艦隊 | ❌ | | 見「未解」 |
+| 劇情、訊息文字 | ❌ | | 見「未解」 |
+
+## 未解
+
+- 世界地圖的 tile 圖形（VRAM tile 0x200 起）存在哪裡、什麼格式；`$122FA` 從 `0x8FA5A` 載入的色盤（ROM_FORMAT §9）
+- 艦隊（INIT `+0x1774` 起）：結構和 SFC 不同（字組互換、船的記錄長度不同）（ROM_FORMAT §2、§10）
+- INIT `+0x000–0x67F` 的遊戲狀態（ROM_FORMAT §2、§10）
+- 人物 +17、+25、+26、+28、+29、+31 高位；VIP +8；女性 +9；船種 +5..+11 與規格的意義；交易港狀態的未解欄位（ROM_FORMAT §2–§4、§10）
+- `0x97000` 的訊息指標表與劇情腳本；商品分類、砲、爵位、建物等 SFC 版有的表在 MD 版還沒找到（ROM_FORMAT §6、§10）
+- 頭像 21、23、59、92、93、95、96 的用途（ROM_FORMAT §7.1、§10）
+- 其他 LZ 表 `0x19E88A`（推測是圖示）、`0x164E80`、`0x14CD5E`、`0x15B1B6` 等（ROM_FORMAT §10）
