@@ -14,8 +14,9 @@ REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(REPO, "tools"))
 import megacd
 import rom as R
+from paths import ORIGINAL_MEGACD
 
-DEFAULT_IMAGE = os.path.join(REPO, "roms", "megacd", "Nobunaga no Yabou - Haouden (Japan).7z")
+DEFAULT_IMAGE = os.path.join(ORIGINAL_MEGACD, "Nobunaga no Yabou - Haouden (Japan).7z")
 SMAIN_AT = 0xC000              # PRG-RAM address of SMAIN.PRG
 RAM = 0x78000                  # PRG-RAM address of the cartridge's work RAM layout ($FF0000)
 FACE_TABLE = 0x419A4           # in SMAIN.PRG: the cartridge's FACE_TABLE / FACE_TABLE2 / FACE_PALETTE

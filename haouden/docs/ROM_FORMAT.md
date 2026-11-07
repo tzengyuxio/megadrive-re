@@ -1,6 +1,6 @@
 # MD 信長の野望・覇王伝 ROM 格式
 
-KOEI，1993，MD。檔案 `roms/Nobunaga no Yabou - Haouden (Japan).zip`（2 MB）。偏移一律是 ROM 偏移（＝68000 位址），RAM 寫成 `$FFxxxx`，多 byte 數值皆 big-endian。資料結構幾乎照搬 SFC 版（`~/works/superfamicom-re/haouden/docs/ROM_FORMAT.md`），差別是指標由 2 bytes（WRAM 低 16 位元）變成 4 bytes（`$FFxxxx`）、word 改成 big-endian、並為對齊插入空 byte。「推測」表示沒有獨立驗證過。
+KOEI，1993，MD。檔案 `_original/md/Nobunaga no Yabou - Haouden (Japan).zip`（2 MB）。偏移一律是 ROM 偏移（＝68000 位址），RAM 寫成 `$FFxxxx`，多 byte 數值皆 big-endian。資料結構幾乎照搬 SFC 版（`~/works/superfamicom-re/haouden/docs/ROM_FORMAT.md`），差別是指標由 2 bytes（WRAM 低 16 位元）變成 4 bytes（`$FFxxxx`）、word 改成 big-endian、並為對齊插入空 byte。「推測」表示沒有獨立驗證過。
 
 ## 1. 硬體與操作
 

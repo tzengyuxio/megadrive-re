@@ -12,14 +12,14 @@ KOEI，1993，MD（512 KB）。日版（表頭 1993.JUN）與美版 Nobunaga's A
 .venv/bin/python zenkoku/export_kaodata.py --out <kaodata>/data-local/nobu2-md
 .venv/bin/python zenkoku/verify_kaodata_export.py --dataset <輸出目錄>
 
-# 模擬器驗證（MAME；加 --rom "roms/Nobunaga's Ambition (USA).zip" 驗美版）
+# 模擬器驗證（MAME；加 --rom "$HOME/game-library/_original/md/Nobunaga's Ambition (USA).zip" 驗美版）
 .venv/bin/python zenkoku/verify_scenarios.py   # 4 劇本載入後的 RAM（約 1 分鐘）
 .venv/bin/python zenkoku/verify_persons.py     # 自国情報畫面：大名 6 項、國 12 項（約 2 分鐘）
 .venv/bin/python zenkoku/verify_faces.py       # 73 張頭像：VRAM、調色盤、截圖（約 30 秒）
 .venv/bin/python zenkoku/verify_maps.py        # 4 劇本開局的大地圖 bitmap 與調色盤（約 1 分鐘）
 ```
 
-ROM 預設讀 `roms/Nobunaga no Yabou - Zenkoku Ban (Japan).zip`，依表頭序號自動判斷日版／美版。依賴：Pillow；openpyxl（可選）；驗證需 `mame`。地圖標註用 macOS 的ヒラギノ角ゴシック，找不到時退回 PIL 預設字型。
+ROM 預設讀 `_original/md/Nobunaga no Yabou - Zenkoku Ban (Japan).zip`，依表頭序號自動判斷日版／美版。依賴：Pillow；openpyxl（可選）；驗證需 `mame`。地圖標註用 macOS 的ヒラギノ角ゴシック，找不到時退回 PIL 預設字型。
 
 ## 檔案
 

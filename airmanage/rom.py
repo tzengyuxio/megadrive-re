@@ -6,10 +6,14 @@ with 4-byte pointers; the code is 68000 C. Text is Shift-JIS (cp932, half-width 
 (= 68000 addresses); RAM addresses are written $FFxxxx.
 """
 import os
+import sys
 import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROMS = os.path.join(os.path.dirname(HERE), "roms")
+sys.path.append(os.path.join(os.path.dirname(HERE), "tools"))
+from paths import ORIGINAL_MD
+
+ROMS = ORIGINAL_MD
 DEFAULT_ROM = os.path.join(ROMS, "Air Management - Oozora ni Kakeru (Japan).zip")
 
 CITY_COUNT = 22

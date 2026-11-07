@@ -9,9 +9,10 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(HERE), "tools"))
+from paths import ORIGINAL_MD
 from triage import load_rom
 
-DEFAULT_ROM = os.path.join(os.path.dirname(HERE), "roms", "Sangokushi II (Japan).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Sangokushi II (Japan).zip")
 KANJI_EXT = os.path.join(HERE, "data", "kanji_ext.json")
 
 PERSON_COUNT = 352

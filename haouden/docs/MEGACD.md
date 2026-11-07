@@ -1,6 +1,6 @@
 # Mega-CD 版『信長の野望・覇王伝』
 
-KOEI，Mega-CD（系統區 `(C)T-76 1994.FEB`、序號 `GM T-76024 -00`；卡帶版是 1993.DEC）。映像：`roms/megacd/Nobunaga no Yabou - Haouden (Japan).7z`（Redump，Track 01 MODE1/2352＋音軌）。程式碼在 `cd.py`：`Disc` 繼承 `rom.Rom`，換上光碟的表格與檔案，沿用卡帶版的解碼器。
+KOEI，Mega-CD（系統區 `(C)T-76 1994.FEB`、序號 `GM T-76024 -00`；卡帶版是 1993.DEC）。映像：`_original/megacd/Nobunaga no Yabou - Haouden (Japan).7z`（Redump，Track 01 MODE1/2352＋音軌）。程式碼在 `cd.py`：`Disc` 繼承 `rom.Rom`，換上光碟的表格與檔案，沿用卡帶版的解碼器。
 
 和卡帶版相比：
 

@@ -1,4 +1,5 @@
-"""Rebuild the output/ folder of one or more games from the ROMs, so output/ can be thrown away at any time.
+"""Rebuild the output/ folder of one or more games from the ROMs (in the game library, tools/paths.py), so output/
+can be thrown away at any time.
 
 Usage: .venv/bin/python scripts/rebuild.py GAME [GAME ...] | --all [--dry-run]
 
@@ -19,11 +20,14 @@ import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PY = os.path.join(ROOT, ".venv", "bin", "python")
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+from paths import ORIGINAL_MD
+
 RENDER = os.path.expanduser("~/.claude/skills/portrait-sheet/render.py")
 # other editions, exported to output/usa/ or output/cn/
-EXPORT_ROMS = {"genchou": ["roms/Genghis Khan II - Clan of the Gray Wolf (USA).zip"],
-               "zenkoku": ["roms/Nobunaga's Ambition (USA).zip"],
-               "retsuden": ["roms/San Guo Zhi Lie Zhuan - Luan Shi Qun Ying (China).zip"]}
+EXPORT_ROMS = {"genchou": ["Genghis Khan II - Clan of the Gray Wolf (USA).zip"],
+               "zenkoku": ["Nobunaga's Ambition (USA).zip"],
+               "retsuden": ["San Guo Zhi Lie Zhuan - Luan Shi Qun Ying (China).zip"]}
 
 
 def games() -> list[str]:
@@ -32,7 +36,7 @@ def games() -> list[str]:
 
 def steps(game: str) -> list[list[str]]:
     export = os.path.join(ROOT, game, "export.py")
-    runs = [[PY, export]] + [[PY, export, "--rom", os.path.join(ROOT, r)] for r in EXPORT_ROMS.get(game, [])]
+    runs = [[PY, export]] + [[PY, export, "--rom", os.path.join(ORIGINAL_MD, r)] for r in EXPORT_ROMS.get(game, [])]
     return runs + [[PY, p] for p in sorted(glob.glob(os.path.join(ROOT, game, "*_manifest.py")))]
 
 

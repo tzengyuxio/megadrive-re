@@ -16,10 +16,11 @@ from dataclasses import dataclass
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(REPO, "tools"))
+from paths import ORIGINAL_MD
 from triage import load_rom
 
-DEFAULT_ROM = os.path.join(REPO, "roms", "Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan).zip")
-USA_ROM = os.path.join(REPO, "roms", "Genghis Khan II - Clan of the Gray Wolf (USA).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan).zip")
+USA_ROM = os.path.join(ORIGINAL_MD, "Genghis Khan II - Clan of the Gray Wolf (USA).zip")
 
 
 @dataclass(frozen=True)

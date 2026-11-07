@@ -1,6 +1,6 @@
 # MD 三國志V（中國盜版）解析
 
-`roms/San Guo Zhi V (China) (Unl).zip`，2MB，無授權中國製（標題畫面標記「SKOB」），表頭被程式碼覆蓋、checksum 不對，MAME 照樣能跑。繁體中文，自訂字碼。不是光榮正式作品，所以不出 kaodata 資料集。ROM 結構與各表格式見 [docs/ROM_FORMAT.md](docs/ROM_FORMAT.md)。
+`_original/md/San Guo Zhi V (China) (Unl).zip`，2MB，無授權中國製（標題畫面標記「SKOB」），表頭被程式碼覆蓋、checksum 不對，MAME 照樣能跑。繁體中文，自訂字碼。不是光榮正式作品，所以不出 kaodata 資料集。ROM 結構與各表格式見 [docs/ROM_FORMAT.md](docs/ROM_FORMAT.md)。
 
 ## 判斷
 

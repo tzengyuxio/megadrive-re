@@ -15,7 +15,7 @@ KOEI，1992，MD。本作只有日版：『大航海時代』，ROM 表頭是 `(
 .venv/bin/python daikoukai/verify_maps.py [--rom ROM]       # 約 11 秒
 ```
 
-- ROM 預設讀 `roms/Daikoukai Jidai (Japan).zip`。
+- ROM 預設讀 `_original/md/Daikoukai Jidai (Japan).zip`。
 - 需要 Pillow。驗證腳本需要 MAME（透過 `tools/mame.py`、`tools/replay.py` 呼叫），在背景執行，不會搶走 focus。
 
 ## 檔案

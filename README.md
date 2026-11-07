@@ -45,7 +45,17 @@ MD／Genesis 歷史策略遊戲的 ROM 逆向工程：解析人物、頭像、�
 | `m68k.py` | 用 MAME debugger 反組譯 68000 |
 | `glyph_match.py` | 以系統字型比對 16×16 字形，輔助轉寫字表 |
 | `kaodata.py`、`parts_sheet.py` | kaodata 格式的讀寫、參考渲染器、組合臉零件總覽（取自 superfamicom-re） |
-| `repos.py` | 其他 repo 的路徑（環境變數可覆寫，見下） |
+| `paths.py` | repo 以外的路徑：原始檔所在的素材庫、superfamicom-re（環境變數可覆寫，見下） |
+
+## 原始檔
+
+ROM 與光碟映像不放在 repo 裡，工具直接讀素材庫（預設 `~/game-library`，用環境變數 `GAME_LIBRARY` 改）：
+
+- `_original/md/`：卡帶 ROM（No-Intro 的 zip，程式直接讀 zip）
+- `_original/megacd/`：Mega-CD 映像（Redump 的 .7z）與 `bios/`；解出的 .iso、bin/cue 快取在 `.emu/megacd/`
+- `_original/sfc/`：和 SFC 版比對時用的 ROM
+
+這些資料夾唯讀，每個都有 `SHA1SUMS.txt`。新的原始檔用 `scripts/add_rom.py` 放進去並記 sha1。找不到檔案時程式會印出缺的檔名。
 
 ## 重建 output/
 
@@ -59,6 +69,6 @@ MD／Genesis 歷史策略遊戲的 ROM 逆向工程：解析人物、頭像、�
 
 ## 依賴其他 repo
 
-`bushou/verify_maps.py`（戰場地形和 SFC 版比對）和 `san2/tools/build_kanji_map.py`（由 SFC 版的漢字對照推出 MD 版）會讀 SFC 版的 ROM，後者還會用 superfamicom-re 的解碼程式和漢字表。兩個位置都寫在 `tools/repos.py`，可用環境變數 `SFC_ORIGINAL`（SFC ROM 所在資料夾）和 `SUPERFAMICOM_RE`（superfamicom-re 的位置）改。
+`san2/tools/build_kanji_map.py`（由 SFC 版的漢字對照推出 MD 版）會用 superfamicom-re 的解碼程式和漢字表，位置寫在 `tools/paths.py`，可用環境變數 `SUPERFAMICOM_RE` 改。它和 `bushou/verify_maps.py` 讀的 SFC 版 ROM 在素材庫的 `_original/sfc/`。
 
 MD 版的分析流程與踩坑見 [docs/PLAYBOOK.md](docs/PLAYBOOK.md)。

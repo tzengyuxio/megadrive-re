@@ -13,10 +13,13 @@ import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
+sys.path.append(os.path.join(REPO, "tools"))
+from paths import ORIGINAL_MD
+
 sys.path.append(os.path.join(REPO, "haouden"))
 import lz  # KOEI LZ as the MD games' table-less C decoder ($3EB1A here)
 
-DEFAULT_ROM = os.path.join(REPO, "roms", "Air Management II - Koukuuou o Mezase (Japan).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Air Management II - Koukuuou o Mezase (Japan).zip")
 
 # ---------------------------------------------------------------- tables (same order and values as the SFC bank $05)
 CITY_COUNT = 89

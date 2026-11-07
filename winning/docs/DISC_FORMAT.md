@@ -1,6 +1,6 @@
 # Mega-CD 『ウイニングポスト』光碟格式
 
-KOEI，Mega-CD（系統區 `1993.JUL`、序號 `GM T-76044`）。只有 Mega-CD 版（MD 沒有卡帶版）；內容是 SFC 版（`~/works/superfamicom-re/winning`，1993.03）的移植：表格相同，改成大端序、加 pad、文字改 Shift-JIS，頭像改成未壓縮的 MD tile。映像：`roms/megacd/Winning Post (Japan).7z`（Redump，Track 01 MODE1/2352＋音軌）。程式碼在 `cd.py`。
+KOEI，Mega-CD（系統區 `1993.JUL`、序號 `GM T-76044`）。只有 Mega-CD 版（MD 沒有卡帶版）；內容是 SFC 版（`~/works/superfamicom-re/winning`，1993.03）的移植：表格相同，改成大端序、加 pad、文字改 Shift-JIS，頭像改成未壓縮的 MD tile。映像：`_original/megacd/Winning Post (Japan).7z`（Redump，Track 01 MODE1/2352＋音軌）。程式碼在 `cd.py`。
 
 ## 1. 光碟檔案
 

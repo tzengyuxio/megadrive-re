@@ -1,6 +1,6 @@
 # MD 提督の決断 ROM 格式
 
-`roms/Teitoku no Ketsudan (Japan).zip`：1 MB，表頭 `SEGA MEGA DRIVE (C)T-76 1992.JUN`、`提督の決断 / P.T.O.`、`GM T-76073 -00`。偏移都是 ROM 偏移（= 68000 位址）；RAM 位址寫成 `$xxxx`，指 `$FF0000–$FFFFFF` 內的偏移。
+`_original/md/Teitoku no Ketsudan (Japan).zip`：1 MB，表頭 `SEGA MEGA DRIVE (C)T-76 1992.JUN`、`提督の決断 / P.T.O.`、`GM T-76073 -00`。偏移都是 ROM 偏移（= 68000 位址）；RAM 位址寫成 `$xxxx`，指 `$FF0000–$FFFFFF` 內的偏移。
 
 程式是 SFC 版（`~/works/superfamicom-re/teitoku`）用 68000 C 重寫：表格、文字編碼、劇本差分的欄位和 SFC 一一對應，只是記錄放寬、改成 big-endian、指標改成 32-bit。SFC 版的格式說明是很好的對照（`superfamicom-re/teitoku/docs/ROM_FORMAT.md`）。
 

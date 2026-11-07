@@ -1,6 +1,6 @@
 # MD 三國志V（中國盜版）ROM 格式
 
-`roms/San Guo Zhi V (China) (Unl).zip`，2MB。位址都是 ROM offset（＝68000 位址）；RAM 寫 `$FFxxxx` 或 `$xxxx`（＝$FF0000 起的 offset）。程式在 `rom.py`。
+`_original/md/San Guo Zhi V (China) (Unl).zip`，2MB。位址都是 ROM offset（＝68000 位址）；RAM 寫 `$FFxxxx` 或 `$xxxx`（＝$FF0000 起的 offset）。程式在 `rom.py`。
 
 ## 總覽
 

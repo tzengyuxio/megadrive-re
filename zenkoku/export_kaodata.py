@@ -60,7 +60,7 @@ def build(rom_path: str) -> tuple[dict, list[bytes]]:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="匯出 kaodata 統一格式資料集 nobu2-md")
-    ap.add_argument("--rom", default=DEFAULT_ROM, help="roms/Nobunaga no Yabou - Zenkoku Ban (Japan).zip 或 .md")
+    ap.add_argument("--rom", default=DEFAULT_ROM, help="_original/md/Nobunaga no Yabou - Zenkoku Ban (Japan).zip 或 .md")
     ap.add_argument("--out", required=True, help="輸出目錄")
     args = ap.parse_args()
     meta, blobs = build(args.rom)

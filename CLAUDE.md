@@ -24,15 +24,15 @@ MD／Genesis 遊戲的 ROM 逆向工程專案，結構比照 `~/works/famicom-re
 
 | 層 | 本 repo |
 |---|---|
-| original | `roms/*.zip`（卡帶，No-Intro；程式直接讀 zip）、`roms/megacd/*.7z`（Mega-CD，Redump）、`roms/megacd/bios/`；`roms/megacd/.cache/` 是映像解出的 .iso／bin，可重建。素材庫的 `~/game-library/_original/md/`、`megacd/` 有同一份（§11） |
+| original | 只在素材庫（§1、§11）：`~/game-library/_original/md/*.zip`（卡帶，No-Intro；程式直接讀 zip）、`_original/megacd/*.7z`（Mega-CD，Redump）與 `bios/`；路徑在 `tools/paths.py`（`GAME_LIBRARY` 可覆寫），新檔用 `scripts/add_rom.py` 放進去。舊的工作副本 `roms/` 等備份後刪 |
 | references | 沒有固定位置（來源網址寫在各遊戲的 `docs/`） |
 | captures | 沒有固定位置（MAME 的截圖與 savestate 放暫存目錄，跑完即刪；GPGX 的 savestate 只在記憶體） |
 | extracted | `<遊戲>/output/`：CSV、xlsx、頭像與地圖 PNG 等解碼結果 |
 | generated | `<遊戲>/output/`：零件總覽（`tools/parts_sheet.py`）等 |
-| runtime | `.emu/`（`tools/gpgx.py --build` 編出的 Genesis Plus GX 與 `system/`）；MAME 用 brew 安裝，經 `tools/mame.py` 呼叫 |
+| runtime | `.emu/`（`tools/gpgx.py --build` 編出的 Genesis Plus GX 與 `system/`；`megacd/` 是映像解出的 .iso、bin/cue，可重建）；MAME 用 brew 安裝，經 `tools/mame.py` 呼叫 |
 | export | `<遊戲>/output/kaodata*/`：kaodata 資料集（交給 kaodata，依它的 `docs/data-format.md`） |
 | docs | 本檔、`README.md`、`BACKLOG.md`、`docs/PLAYBOOK.md`、各遊戲的 `README.md` 與 `docs/` |
-| tools | `tools/`（共用：MAME／GPGX 驅動、反組譯、kaodata 讀寫等）；各遊戲資料夾裡的 `*.py`（解碼、匯出、驗證）；`scripts/rebuild.py`（重建各遊戲的 `output/`）、`scripts/archive.py`（把成果與原始檔複製進素材庫，共通語言 §11） |
+| tools | `tools/`（共用：MAME／GPGX 驅動、反組譯、kaodata 讀寫等）；各遊戲資料夾裡的 `*.py`（解碼、匯出、驗證）；`scripts/rebuild.py`（重建各遊戲的 `output/`）、`scripts/archive.py`（把成果複製進素材庫，共通語言 §11）、`scripts/add_rom.py`（新原始檔放進 `_original/`） |
 
 ## 上下游
 

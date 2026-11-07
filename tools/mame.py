@@ -21,7 +21,7 @@ Prelude API (Lua):
   Mega-CD (run() on a .7z/.cue image): SUB / SUBSP are the sub CPU (PRG-RAM at $000000); srd8/16/32, swr8/16
 
 The ROM is extracted from its zip into a temp folder, which is deleted afterwards. MAME needs no BIOS for
-megadrij / genesis. Mega-CD images run on megacdj with the v1.11 BIOS from roms/megacd/bios/megacdj.zip and the
+megadrij / genesis. Mega-CD images run on megacdj with the v1.11 BIOS from the game library's _original/megacd/bios/megacdj.zip and the
 bin/cue that tools/megacd.py unpacks; MAME 0.289's megacdj (preliminary) only reaches the BIOS / CD player with the
 KOEI discs, so it cannot verify them.
 """
@@ -33,9 +33,10 @@ import zipfile
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import megacd
+from paths import ORIGINAL_MEGACD
 
 SYSTEM = {"J": "megadrij", "U": "genesis", "E": "megadriv"}
-CD_BIOS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "roms", "megacd", "bios")
+CD_BIOS = os.path.join(ORIGINAL_MEGACD, "bios")
 
 PRELUDE = r"""
 local M=manager.machine

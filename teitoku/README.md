@@ -18,7 +18,7 @@ KOEI，1992，MD（1 MB，T-76073）。程式是 SFC 版（`~/works/superfamicom
 .venv/bin/python teitoku/verify_maps.py        # 世界地圖：tile、tilemap、CRAM、截圖（約 10 秒）
 ```
 
-ROM 預設讀 `roms/Teitoku no Ketsudan (Japan).zip`。依賴：Pillow；openpyxl（可選）；驗證需 `mame`。
+ROM 預設讀 `_original/md/Teitoku no Ketsudan (Japan).zip`。依賴：Pillow；openpyxl（可選）；驗證需 `mame`。
 
 ## 檔案
 

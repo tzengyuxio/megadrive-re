@@ -6,12 +6,16 @@ structs: big-endian, 16-bit fields word aligned, name offsets turned into 32-bit
 See docs/ROM_FORMAT.md.
 """
 import os
+import sys
 import unicodedata
 import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
-DEFAULT_ROM = os.path.join(REPO, "roms", "Daikoukai Jidai (Japan).zip")
+sys.path.append(os.path.join(REPO, "tools"))
+from paths import ORIGINAL_MD
+
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Daikoukai Jidai (Japan).zip")
 
 # ---------------------------------------------------------------- initial game state
 INIT, INIT_RAM, INIT_SIZE = 0xE3E48, 0xFF1000, 0x121B   # memcpy $0688 on a new game (frame ~1770)

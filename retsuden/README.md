@@ -20,7 +20,7 @@ SEGA，1991，MD（ROM 表頭 `(C)SEGA 1991.APR`，`GM G-5510`，1MB）。非光
     retsuden/output/portrait-sheet/retsuden/out
 ```
 
-ROM 預設直接讀 `roms/Sangokushi Retsuden - Ransei no Eiyuutachi (Japan).zip`；所有腳本加 `--rom "roms/San Guo Zhi Lie Zhuan - Luan Shi Qun Ying (China).zip"` 改跑中文版（依 ROM 內容自動判斷版本）。依賴：Pillow、numpy；openpyxl（可選，.xlsx）；驗證需 `mame`（`brew install mame`，不需 BIOS）。
+ROM 預設直接讀 `_original/md/Sangokushi Retsuden - Ransei no Eiyuutachi (Japan).zip`；所有腳本加 `--rom "$HOME/game-library/_original/md/San Guo Zhi Lie Zhuan - Luan Shi Qun Ying (China).zip"` 改跑中文版（依 ROM 內容自動判斷版本）。依賴：Pillow、numpy；openpyxl（可選，.xlsx）；驗證需 `mame`（`brew install mame`，不需 BIOS）。
 
 ## 檔案
 

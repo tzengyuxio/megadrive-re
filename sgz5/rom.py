@@ -11,9 +11,10 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(REPO, "tools"))
+from paths import ORIGINAL_MD
 from triage import load_rom
 
-DEFAULT_ROM = os.path.join(REPO, "roms", "San Guo Zhi V (China) (Unl).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "San Guo Zhi V (China) (Unl).zip")
 MD_LEVELS = (0, 52, 87, 116, 144, 172, 206, 255)  # MAME's levels of the 3-bit MD colour values
 
 # Scenarios: index = $FF60E3. The titles are on the scenario menu (drawn as graphics, not found as text); the

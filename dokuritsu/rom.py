@@ -13,9 +13,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(REPO, "tools"))
 import koei_lz
+from paths import ORIGINAL_MD
 from triage import load_rom
 
-DEFAULT_ROM = os.path.join(REPO, "roms", "Liberty or Death (USA).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Liberty or Death (USA).zip")
 
 # ---------------------------------------------------------------- static tables
 # Persons: 250 x 36 bytes, the SFC order. +0 given name (12, NUL padded), +12 surname (15), +27..+30 stats,

@@ -18,7 +18,7 @@ KOEI，1992，MD（1 MB，`GM T-76063`，海外名 Gemfire）。資料和 FC 版
 .venv/bin/python royal/verify_map.py         # 主畫面版面、地圖 tile、調色盤、截圖
 ```
 
-ROM 預設讀 `roms/Royal Blood (Japan).zip`。依賴：Pillow；openpyxl（可選）；驗證需 `mame`。
+ROM 預設讀 `_original/md/Royal Blood (Japan).zip`。依賴：Pillow；openpyxl（可選）；驗證需 `mame`。
 
 ## 檔案
 

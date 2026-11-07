@@ -18,7 +18,7 @@ KOEI，1993，MD（1.25 MB，`GM T-76123`）。資料和 SFC 版（`~/works/supe
 .venv/bin/python taikou/verify_faces.py       # 258 張頭像＋518 個組合碼：VRAM、CRAM、截圖（約 30 分鐘；--quick 只跑 5 個）
 ```
 
-ROM 預設讀 `roms/Taikou Risshiden (Japan).zip`。依賴：Pillow；openpyxl（可選）；驗證需 `mame`。LZ 解碼共用 `haouden/lz.py`。
+ROM 預設讀 `_original/md/Taikou Risshiden (Japan).zip`。依賴：Pillow；openpyxl（可選）；驗證需 `mame`。LZ 解碼共用 `haouden/lz.py`。
 
 ## 檔案
 

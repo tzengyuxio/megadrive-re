@@ -93,7 +93,7 @@ KOEI，MD，512 KB。兩個版本：日版 `Nobunaga no Yabou - Zenkoku Ban (Jap
 - 名字是 ASCII，每個大名只有一個 11-byte 名字（`$1196`，53 × 11；如 `Oda`、`Kenshin`），沒有姓／名分開。
 - 國名 50 × 10（`$1978`），區塊 2 在 `$1942`（`0x3EC` bytes），相鄰 `$1B6C`、地方 `$1CFC`；國表 `$13DE`、花紋 `$190C`，大名數 `$D3E0`；載入完成 `$9468`。
 - 大地圖的種子點（`0x31458` 起）和 bitmap 稍有不同（英文國名標籤位置不同）。
-- ROM 位址見 `rom.LAYOUTS["U"]`。四支驗證腳本加 `--rom "roms/Nobunaga's Ambition (USA).zip"` 即可，按鍵序列相同。
+- ROM 位址見 `rom.LAYOUTS["U"]`。四支驗證腳本加 `--rom "$HOME/game-library/_original/md/Nobunaga's Ambition (USA).zip"` 即可，按鍵序列相同。
 
 ## 8. 操作序列（MAME，按鍵 hold 幀數照寫）
 

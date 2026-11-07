@@ -16,7 +16,7 @@ KOEI，1991 年 10 月，Mega Drive（1 MB）。和 SFC 版スーパー三國志
 .venv/bin/python san2/tools/build_kanji_map.py
 ```
 
-- ROM 預設直接讀 `roms/Sangokushi II (Japan).zip`。
+- ROM 預設直接讀 `_original/md/Sangokushi II (Japan).zip`。
 - 依賴：Pillow；openpyxl（可選，匯出 .xlsx）。
 - 驗證腳本需要 MAME（`tools/mame.py`、`tools/drive.py`、`tools/replay.py`），多個 MAME 平行跑。
 

@@ -13,10 +13,11 @@ from functools import cache
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(os.path.dirname(HERE), "tools"))
+from paths import ORIGINAL_MD
 from triage import load_rom
 
-DEFAULT_ROM = os.path.join(os.path.dirname(HERE), "roms", "Sangokushi Retsuden - Ransei no Eiyuutachi (Japan).zip")
-CN_ROM = os.path.join(os.path.dirname(HERE), "roms", "San Guo Zhi Lie Zhuan - Luan Shi Qun Ying (China).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Sangokushi Retsuden - Ransei no Eiyuutachi (Japan).zip")
+CN_ROM = os.path.join(ORIGINAL_MD, "San Guo Zhi Lie Zhuan - Luan Shi Qun Ying (China).zip")
 KANA = " アイウエオカキクケコサシセソタチツテトナハヒフヘホマモヤユヨラリルレロワンュョガギグゲゴジゼダゾデドバビブボパピペ１２３４５６７８９０スャネメ"
 SCENARIO_YEARS = (189, 200, 215)
 

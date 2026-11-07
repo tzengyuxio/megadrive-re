@@ -15,7 +15,7 @@ KOEI，1991.OCT，MD（1 MB，無壓縮，68000 C 編譯，大端序）。2 個�
 .venv/bin/python bushou/verify_maps.py                   # 約 6 秒
 ```
 
-- ROM 預設讀 `roms/Nobunaga no Yabou - Bushou Fuuunroku (Japan).zip`，`--rom` 也接受 .md。
+- ROM 預設讀 `_original/md/Nobunaga no Yabou - Bushou Fuuunroku (Japan).zip`，`--rom` 也接受 .md。
 - 依賴：Pillow、openpyxl。字型總覽與戰場示意圖的標字用 macOS 的ヒラギノ角ゴシック。
 - 驗證腳本用 MAME（共用的 `tools/mame.py`、`tools/replay.py`）：照按鍵序列玩到某一幀存檔，之後每一輪改 RAM、重播、讀 VRAM／CRAM／RAM 與截圖。操作序列見 ROM_FORMAT.md §8。
 

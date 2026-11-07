@@ -126,7 +126,7 @@ def build(image: str) -> tuple[dict, list[bytes]]:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="匯出 kaodata 統一格式資料集 winning-md")
-    ap.add_argument("--image", default=cd.DEFAULT_IMAGE, help="roms/megacd/ 的 7z 或 .cue")
+    ap.add_argument("--image", default=cd.DEFAULT_IMAGE, help="_original/megacd/ 的 7z 或 .cue")
     ap.add_argument("--out", required=True, help="輸出目錄")
     args = ap.parse_args()
     meta, blobs = build(args.image)

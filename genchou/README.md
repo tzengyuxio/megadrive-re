@@ -18,8 +18,8 @@ Mega-CD 版（1993-09，多了劇本「源平の争乱」與 21 張專屬頭像�
 .venv/bin/python genchou/verify_cd_scenarios.py                 # Mega-CD，約 5 秒
 ```
 
-- ROM 預設直接讀 `roms/Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan).zip`；美版用 `--rom "roms/Genghis Khan II - Clan of the Gray Wolf (USA).zip"`（各腳本都接受）。
-- 依賴：Pillow；openpyxl（可選，匯出 .xlsx）。驗證需要 MAME（`tools/mame.py`、`tools/replay.py`），在背景執行不搶 focus。Mega-CD 版讀 `roms/megacd/Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan).7z`（`--image`／`--cd` 可換），驗證用 Genesis Plus GX（`tools/gpgx.py --build`，要 Mega-CD 2 v2.00 BIOS）。
+- ROM 預設直接讀 `_original/md/Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan).zip`；美版用 `--rom "$HOME/game-library/_original/md/Genghis Khan II - Clan of the Gray Wolf (USA).zip"`（各腳本都接受）。
+- 依賴：Pillow；openpyxl（可選，匯出 .xlsx）。驗證需要 MAME（`tools/mame.py`、`tools/replay.py`），在背景執行不搶 focus。Mega-CD 版讀 `_original/megacd/Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan).7z`（`--image`／`--cd` 可換），驗證用 Genesis Plus GX（`tools/gpgx.py --build`，要 Mega-CD 2 v2.00 BIOS）。
 
 ## 檔案
 

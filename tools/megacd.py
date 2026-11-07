@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Mega-CD images (Redump .7z / .zip with a .cue and Track 01 MODE1/2352): the data track's 2048-byte sectors and
 its ISO 9660 files. Archives are read with bsdtar (libarchive, macOS built-in); the data track is cached under
-roms/megacd/.cache/ as a plain 2048-byte-sector .iso, and cue() unpacks the bin/cue there for MAME.
+.emu/megacd/ (runtime: the images in the game library are read only) as a plain 2048-byte-sector .iso, and cue() unpacks the bin/cue there for MAME.
 
 Usage: .venv/bin/python tools/megacd.py IMAGE [--extract DIR]    # list the files (and copy them to DIR)
 """
@@ -11,7 +11,7 @@ import os
 import subprocess
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CACHE = os.path.join(REPO, "roms", "megacd", ".cache")
+CACHE = os.path.join(REPO, ".emu", "megacd")
 SECTOR = 2048
 
 

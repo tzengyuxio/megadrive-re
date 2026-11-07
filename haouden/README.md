@@ -16,10 +16,10 @@ Mega-CD 版（1994，多了 1583 年劇本、28 人改用新專屬頭像）見 [
 .venv/bin/python haouden/verify_cd_scenarios.py             # Mega-CD，約 3 秒
 ```
 
-- ROM 預設直接讀 `roms/Nobunaga no Yabou - Haouden (Japan).zip`，`--rom` 也接受 .md／.bin。
+- ROM 預設直接讀 `_original/md/Nobunaga no Yabou - Haouden (Japan).zip`，`--rom` 也接受 .md／.bin。
 - LZ 解壓用 `lz.py`（遊戲 `$3C36` 的 KOEI LZ，和 MD 三國志III 相同，取自 `san3/lz.py`）。
 - 依賴：Pillow；openpyxl（可選，匯出 .xlsx）。驗證腳本用 MAME（`tools/mame.py`、`tools/replay.py`）。
-- Mega-CD 版讀 `roms/megacd/Nobunaga no Yabou - Haouden (Japan).7z`（`--image`／`--cd` 可換），驗證用 Genesis Plus GX（`tools/gpgx.py`）。
+- Mega-CD 版讀 `_original/megacd/Nobunaga no Yabou - Haouden (Japan).7z`（`--image`／`--cd` 可換），驗證用 Genesis Plus GX（`tools/gpgx.py`）。
 
 ## 檔案
 

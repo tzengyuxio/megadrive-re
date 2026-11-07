@@ -1,6 +1,6 @@
 # MD 三國志II ROM 格式
 
-KOEI，1991 年 10 月，Mega Drive。檔案 `roms/Sangokushi II (Japan).zip`（1 MB，SHA-1 `d9a912caacaa476a890564f62b6ce9cc8f60496e`）。
+KOEI，1991 年 10 月，Mega Drive。檔案 `_original/md/Sangokushi II (Japan).zip`（1 MB，SHA-1 `d9a912caacaa476a890564f62b6ce9cc8f60496e`）。
 
 本文的偏移一律是 **ROM 偏移**，也就是 68000 位址（ROM 映射在 `$000000–$0FFFFF`）。RAM 位址寫成 `$FFxxxx`。多 byte 數值都是**大端序**。
 

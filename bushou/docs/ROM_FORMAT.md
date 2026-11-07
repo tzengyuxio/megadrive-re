@@ -1,6 +1,6 @@
 # MD 信長の野望・武将風雲録 ROM 格式
 
-ROM：`roms/Nobunaga no Yabou - Bushou Fuuunroku (Japan).zip`，1 MB，1991.OCT，KOEI。68000 C 編譯（`link`／`pea` 風格），資料一律**大端序**，沒有壓縮。資料內容與 SFC 版（`~/works/superfamicom-re/bushou/`）幾乎相同（劇本數值、頭像碼、組合臉區域表、戰場地形都一致），但結構改成 68000 的 C struct：欄位放寬成 16／32 bit，姓名直接放在武將記錄裡（SFC 是另一張姓名表）。
+ROM：`_original/md/Nobunaga no Yabou - Bushou Fuuunroku (Japan).zip`，1 MB，1991.OCT，KOEI。68000 C 編譯（`link`／`pea` 風格），資料一律**大端序**，沒有壓縮。資料內容與 SFC 版（`~/works/superfamicom-re/bushou/`）幾乎相同（劇本數值、頭像碼、組合臉區域表、戰場地形都一致），但結構改成 68000 的 C struct：欄位放寬成 16／32 bit，姓名直接放在武將記錄裡（SFC 是另一張姓名表）。
 
 位址皆為 ROM 偏移（= 68000 位址）。RAM 寫成 `$FFxxxx`。
 

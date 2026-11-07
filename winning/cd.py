@@ -12,8 +12,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(REPO, "tools"))
 import megacd
+from paths import ORIGINAL_MEGACD
 
-DEFAULT_IMAGE = os.path.join(REPO, "roms", "megacd", "Winning Post (Japan).7z")
+DEFAULT_IMAGE = os.path.join(ORIGINAL_MEGACD, "Winning Post (Japan).7z")
 SMAIN_AT = 0xC000              # PRG-RAM address of SMAIN.PRG; its pointers are PRG-RAM addresses
 
 # SMAIN.PRG offsets

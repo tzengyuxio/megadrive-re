@@ -10,10 +10,13 @@ import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
+sys.path.append(os.path.join(REPO, "tools"))
+from paths import ORIGINAL_MD
+
 sys.path.insert(0, HERE)
 from lz import decompress
 
-DEFAULT_ROM = os.path.join(REPO, "roms", "Nobunaga no Yabou - Haouden (Japan).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Nobunaga no Yabou - Haouden (Japan).zip")
 
 # Scenario images: the loader at $1E2EE copies 0x6F3A bytes of scenario s (pointer table SCENARIO_TABLE, index =
 # scenario number 1-3) to $FF001A and the common block COMMON (0x522 bytes) to $FF6F54.

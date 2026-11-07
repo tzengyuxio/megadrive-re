@@ -9,9 +9,10 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(REPO, "tools"))
+from paths import ORIGINAL_MD
 from triage import load_rom
 
-DEFAULT_ROM = os.path.join(REPO, "roms", "Nobunaga no Yabou - Bushou Fuuunroku (Japan).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Nobunaga no Yabou - Bushou Fuuunroku (Japan).zip")
 CHARSET = os.path.join(HERE, "data", "charset.txt")
 
 # ---------------------------------------------------------------- text

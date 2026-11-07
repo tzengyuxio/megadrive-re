@@ -22,7 +22,7 @@ KOEI，1994，MD（2 MB，`GM T-76106`，只在北美發行；日文原作是 SF
 .venv/bin/python dokuritsu/verify_battle_maps.py   # HEX 戰場兩層，用遊戲的 LZ 解碼（約 10 秒）
 ```
 
-ROM 預設讀 `roms/Liberty or Death (USA).zip`。依賴：Pillow；openpyxl（可選）；驗證需 `mame`（機型 genesis）。LZ 解碼用 `tools/koei_lz.py`。
+ROM 預設讀 `_original/md/Liberty or Death (USA).zip`。依賴：Pillow；openpyxl（可選）；驗證需 `mame`（機型 genesis）。LZ 解碼用 `tools/koei_lz.py`。
 
 ## 檔案
 

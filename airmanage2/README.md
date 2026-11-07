@@ -18,7 +18,7 @@ KOEI，1994，MD（1 MB，`GM T-76143`）。資料表和 SFC 版（`~/works/supe
 .venv/bin/python airmanage2/verify_maps.py        # 世界地圖、7 張地區地圖、都市標記
 ```
 
-ROM 預設讀 `roms/Air Management II - Koukuuou o Mezase (Japan).zip`。依賴：Pillow；openpyxl（xlsx）；驗證需 `mame`。LZ 解碼借用 `haouden/lz.py`。
+ROM 預設讀 `_original/md/Air Management II - Koukuuou o Mezase (Japan).zip`。依賴：Pillow；openpyxl（xlsx）；驗證需 `mame`。LZ 解碼借用 `haouden/lz.py`。
 
 ## 檔案
 

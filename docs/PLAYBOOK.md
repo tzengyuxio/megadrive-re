@@ -55,12 +55,12 @@
 
 ## Mega-CD
 
-- 映像放 `roms/megacd/`（檔名和卡帶版重複），`tools/megacd.py` 讀 Redump .7z 的資料軌（Track 01 MODE1/2352）與 ISO 9660 檔案；快取在 `roms/megacd/.cache/`。
+- 映像放素材庫的 `_original/megacd/`（檔名和卡帶版重複），`tools/megacd.py` 讀 Redump .7z 的資料軌（Track 01 MODE1/2352）與 ISO 9660 檔案；解出的 .iso、bin/cue 快取在 `.emu/megacd/`（`_original/` 唯讀）。
 - 光榮的 Mega-CD 作品把卡帶版的資料拆成檔案：`SMAIN.PRG` 跑在副 CPU（PRG-RAM，載入 `$C000`），`INIT.PRG` 等 overlay 載入 `$66000`；頭像改成未壓縮、每張 1,024 bytes 一格（960 bytes tile＋64 bytes 0）的 `ORGKAO.DAT`／`GH2GRP.DAT`，合成臉預先合成好存在同一檔。
 - 拿卡帶版解出來的頭像／記錄在檔案裡搜尋，就能一次定位表格與載入位址。
 - MAME 0.289 的 `megacdj`（preliminary，不支援 savestate）用 v1.00P／v1.11 BIOS 都只停在 BIOS 或 CD 播放器（cue、單一 bin、iso、CHD 都一樣），不能用來驗證。
 - 改用 Genesis Plus GX（`tools/gpgx.py`）：`--build` 從固定 commit 編 libretro core，加上 PC 斷點與記憶體匯出（`tools/gpgx/probe.c`）。踩坑：
-  - BIOS 要 **Mega-CD 2 (J) v2.00**（CRC `dd6cc972`，放 `roms/megacd/bios/`）；v1.00P／G、v1.11 會讀到光碟但還是進 CD 播放器。
+  - BIOS 要 **Mega-CD 2 (J) v2.00**（CRC `dd6cc972`，放 `_original/megacd/bios/`）；v1.00P／G、v1.11 會讀到光碟但還是進 CD 播放器。
   - 光榮的遊戲要 1 Mbit 的備份 RAM 卡匣（core 選項 `genesis_plus_gx_cart_size`；元朝秘史要 119 blocks），否則開頭就停在「バックアップRAMカートリッジが初期化されていません」。
   - core 用 `RETRO_DEVICE_ID_JOYPAD_MASK`（id 256）一次讀整個手把；光榮的 CD 遊戲讀手把很慢，按鍵要按住 30–60 幀，方向鍵按太久會連發（選單用 20 幀）。
   - core 的記憶體是主機序的 16-bit word（讀寫要交換 byte）；CRAM 存成 9-bit `BBBGGGRRR`。

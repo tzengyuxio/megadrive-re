@@ -15,7 +15,7 @@ KOEI，1994，MD。本作只有日版：『大航海時代Ⅱ』，ROM 表頭是
 .venv/bin/python daikoukai2/verify_maps.py [--rom ROM] [--keep DIR]    # 約 7 秒
 ```
 
-- ROM 預設讀 `roms/Daikoukai Jidai II (Japan).zip`。
+- ROM 預設讀 `_original/md/Daikoukai Jidai II (Japan).zip`。
 - 需要 Pillow。驗證腳本需要 MAME（透過 `tools/mame.py`、`tools/replay.py` 呼叫），在背景執行，不會搶走 focus。
 - 進主角選擇畫面的按鍵：`w1500 start w300 start w300 start w300`（第 2484 幀）。選完主角後，「名前を変えますか?」按 `b`（或 `right` `c`）選「いいえ」就進入遊戲（リスボン）。
 

@@ -11,9 +11,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(os.path.dirname(HERE), "tools"))
 import lz
+from paths import ORIGINAL_MD
 from triage import load_rom
 
-DEFAULT_ROM = os.path.join(os.path.dirname(HERE), "roms", "Sangokushi III (Japan).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Sangokushi III (Japan).zip")
 
 # Font ($C4EE): 0x867 sorted Shift-JIS codes at FONT_CODES; glyph i (binary search, $C4A0) is 32 bytes at
 # FONT_GLYPHS + 32 i = four 8x8 1bpp tiles (top-left, top-right, bottom-left, bottom-right). Half-width

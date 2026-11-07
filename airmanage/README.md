@@ -18,7 +18,7 @@ KOEI，1992，MD（1 MB，`GM T-76083`）。資料表和 SFC 版（`~/works/supe
 .venv/bin/python airmanage/verify_maps.py        # 大地圖：tile、調色盤、plane B、城市標記
 ```
 
-ROM 預設讀 `roms/Air Management - Oozora ni Kakeru (Japan).zip`。依賴：Pillow；openpyxl（可選）；驗證需 `mame`。
+ROM 預設讀 `_original/md/Air Management - Oozora ni Kakeru (Japan).zip`。依賴：Pillow；openpyxl（可選）；驗證需 `mame`。
 
 ## 檔案
 

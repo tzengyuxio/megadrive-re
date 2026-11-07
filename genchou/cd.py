@@ -14,8 +14,9 @@ REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(REPO, "tools"))
 import megacd
 import rom as R
+from paths import ORIGINAL_MEGACD
 
-DEFAULT_IMAGE = os.path.join(REPO, "roms", "megacd", "Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan).7z")
+DEFAULT_IMAGE = os.path.join(ORIGINAL_MEGACD, "Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan).7z")
 SMAIN_AT, INIT_AT = 0xC000, 0x66000
 FACE_SLOTS = 0x100000          # GH2GRP.DAT + 0x11A800 in the image: 1024-byte slots (960 bytes of tiles, 64 zero)
 FACE_FILE_AT = 0x11A800

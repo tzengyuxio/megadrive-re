@@ -3,7 +3,7 @@
 input, screenshots, main / sub 68000 memory and registers, PC breakpoints. MAME's megacdj does not boot the KOEI
 discs (docs/PLAYBOOK.md), Genesis Plus GX does.
 
-    with Emu("roms/megacd/... (Japan).7z") as emu:
+    with Emu("~/game-library/_original/megacd/... (Japan).7z") as emu:
         emu.run(900); emu.tap("start"); emu.run(3000)
         emu.shot("title.png"); emu.prg_ram()[0x2000:0x2010]
 
@@ -12,7 +12,7 @@ included and the PATCHES below (breakpoint checks in both CPUs' run loops):
 
     .venv/bin/python tools/gpgx.py --build
 
-The BIOS is the Japanese Mega-CD 2 v2.00 (CRC dd6cc972, roms/megacd/bios/), copied to .emu/system/bios_CD_J.bin: with
+The BIOS is the Japanese Mega-CD 2 v2.00 (CRC dd6cc972, game library _original/megacd/bios/), copied to .emu/system/bios_CD_J.bin: with
 the Model 1 BIOSes (v1.00G/P, v1.11) the KOEI discs are read but not booted (the BIOS starts its CD player).
 Memory views are big-endian bytes as the 68000 sees them (the core keeps 16-bit words in host order).
 """
@@ -29,13 +29,16 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import megacd
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from paths import ORIGINAL_MEGACD
+
 EMU = os.path.join(REPO, ".emu")
 SRC = os.path.join(EMU, "gpgx")
 CORE = os.path.join(SRC, "genesis_plus_gx_libretro.dylib")
 SYSTEM = os.path.join(EMU, "system")
 COMMIT = "aa74d79"
 URL = "https://github.com/libretro/Genesis-Plus-GX.git"
-BIOS = os.path.join(REPO, "roms", "megacd", "bios", "Mega-CD 2 (J) v2.00.bin")
+BIOS = os.path.join(ORIGINAL_MEGACD, "bios", "Mega-CD 2 (J) v2.00.bin")
 PROBE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gpgx", "probe.c")
 PATCHES = [  # (file, anchor, text inserted before the anchor)
     ("core/m68k/m68kcpu.c", "    /* Decode next instruction */\n    REG_IR = m68ki_read_imm_16();\n\n    /* 68K bus",

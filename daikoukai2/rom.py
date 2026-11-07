@@ -15,8 +15,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(REPO, "tools"))
 import koei_lz
+from paths import ORIGINAL_MD
 
-DEFAULT_ROM = os.path.join(REPO, "roms", "Daikoukai Jidai II (Japan).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Daikoukai Jidai II (Japan).zip")
 
 # ---------------------------------------------------------------- initial game state
 # ROM INIT is copied to RAM $FF0000 ($136FC -> memcpy $7240) before the title screen; every table with a RAM address

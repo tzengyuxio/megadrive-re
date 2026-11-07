@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """First look at MD ROMs: header, checksum, vectors, KOEI LZ table block, Shift-JIS game words.
 
-Usage: .venv/bin/python tools/triage.py [ROM ...]     # default: every ROM in roms/
+Usage: .venv/bin/python tools/triage.py [ROM ...]     # default: every ROM in the game library's _original/md/
 Prints a Markdown table.
 """
 import argparse
@@ -13,6 +13,7 @@ import zipfile
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "tools"))
 from koei_lz import find_tables
+from paths import ORIGINAL_MD
 
 WORDS = ["武将", "兵士", "君主", "大名", "シナリオ", "金", "兵糧"]
 
@@ -51,7 +52,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description="MD ROM 初步分診")
     ap.add_argument("roms", nargs="*")
     args = ap.parse_args()
-    paths = args.roms or sorted(glob.glob(os.path.join(REPO, "roms", "*.zip")))
+    paths = args.roms or sorted(glob.glob(os.path.join(ORIGINAL_MD, "*.zip")))
     print("| ROM | size | copyright | serial | title | sum | SRAM | reset | VBlank | KOEI LZ | SJIS |")
     print("|-----|------|-----------|--------|-------|-----|------|-------|--------|---------|------|")
     for p in paths:

@@ -21,11 +21,11 @@ Mega-CD 版（多了劇本「黄巾の乱」、何進取代賈範、頭像預先
 .venv/bin/python san3/verify_cd_scenarios.py                           # Mega-CD，約 3 秒
 ```
 
-- ROM 預設讀 `roms/Sangokushi III (Japan).zip`，`--rom` 也接受 .md。
+- ROM 預設讀 `_original/md/Sangokushi III (Japan).zip`，`--rom` 也接受 .md。
 - 依賴：Pillow、openpyxl（沒有就只輸出 CSV）。地圖標字用 macOS 的ヒラギノ角ゴシック。
 - 驗證腳本用 MAME（共用的 `tools/mame.py`、`tools/drive.py`），照按鍵序列玩到指令畫面；操作序列見 ROM_FORMAT.md §1。
 - 顏色一律用 MAME 的 MD 色階（`rom.LEVELS`），和截圖一致。
-- Mega-CD 版讀 `roms/megacd/Sangokushi III (Japan).7z`（`--image`／`--cd` 可換），驗證用 Genesis Plus GX（`tools/gpgx.py`）。
+- Mega-CD 版讀 `_original/megacd/Sangokushi III (Japan).7z`（`--image`／`--cd` 可換），驗證用 Genesis Plus GX（`tools/gpgx.py`）。
 
 ## 檔案
 

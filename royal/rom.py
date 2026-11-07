@@ -13,9 +13,10 @@ import unicodedata
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 sys.path.insert(0, os.path.join(REPO, "tools"))
+from paths import ORIGINAL_MD
 from triage import load_rom
 
-DEFAULT_ROM = os.path.join(REPO, "roms", "Royal Blood (Japan).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Royal Blood (Japan).zip")
 MD_LEVELS = (0, 52, 87, 116, 144, 172, 206, 255)  # MAME's levels of the 3-bit MD colour values
 
 # Scenarios: 4 blocks of 0x9D2 bytes; the game copies the chosen one to SCENARIO_RAM. Pointer fields (header +0,

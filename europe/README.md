@@ -19,7 +19,7 @@ KOEI，1993，MD（1 MB，`GM T-76113`，海外名 Operation Europe: Path to Vic
 .venv/bin/python europe/verify_faces.py       # 120 張頭像：VRAM、CRAM、截圖（約 1 分鐘；--quick 只跑 5 張）
 ```
 
-ROM 預設讀 `roms/Europa Sensen (Japan).zip`。依賴：Pillow；openpyxl（可選）；驗證需 `mame`。LZ 解碼共用 `haouden/lz.py`。
+ROM 預設讀 `_original/md/Europa Sensen (Japan).zip`。依賴：Pillow；openpyxl（可選）；驗證需 `mame`。LZ 解碼共用 `haouden/lz.py`。
 
 ## 檔案
 

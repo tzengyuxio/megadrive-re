@@ -13,10 +13,13 @@ import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
+sys.path.append(os.path.join(REPO, "tools"))
+from paths import ORIGINAL_MD
+
 sys.path.append(os.path.join(REPO, "haouden"))  # last, so haouden/verify_*.py never shadow ours
 import lz
 
-DEFAULT_ROM = os.path.join(REPO, "roms", "Europa Sensen (Japan).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Europa Sensen (Japan).zip")
 
 # Text: Shift-JIS kanji / full-width, half-width kana runs: ESC K = katakana (the default at the start of a
 # string), ESC H = hiragana; the mode carries over to the next line of a multi-line text. In katakana '-' is ー.

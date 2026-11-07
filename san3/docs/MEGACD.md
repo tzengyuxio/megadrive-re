@@ -1,6 +1,6 @@
 # Mega-CD 版『三國志III』
 
-KOEI，Mega-CD（系統區 `(C)T-76 1993.FEB`、序號 `GM T-76014 -00`）。映像：`roms/megacd/Sangokushi III (Japan).7z`（Redump，Track 01 MODE1/2352＋音軌）。程式碼在 `cd.py`：`Disc` 繼承 `rom.Rom`，換上光碟的表格位址，沿用卡帶版的解碼器。
+KOEI，Mega-CD（系統區 `(C)T-76 1993.FEB`、序號 `GM T-76014 -00`）。映像：`_original/megacd/Sangokushi III (Japan).7z`（Redump，Track 01 MODE1/2352＋音軌）。程式碼在 `cd.py`：`Disc` 繼承 `rom.Rom`，換上光碟的表格位址，沿用卡帶版的解碼器。
 
 和卡帶版相比：
 

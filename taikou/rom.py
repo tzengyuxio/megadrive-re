@@ -12,10 +12,13 @@ import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
+sys.path.append(os.path.join(REPO, "tools"))
+from paths import ORIGINAL_MD
+
 sys.path.append(os.path.join(REPO, "haouden"))  # last, so haouden/verify_*.py never shadow ours
 import lz
 
-DEFAULT_ROM = os.path.join(REPO, "roms", "Taikou Risshiden (Japan).zip")
+DEFAULT_ROM = os.path.join(ORIGINAL_MD, "Taikou Risshiden (Japan).zip")
 
 # Names: 716 x 16 bytes: +0 surname (7 bytes SJIS, 0-padded), +7 given name (7), +14 face code BE16.
 # The name index is the person id (person record +0); names 713-715 have no person record.

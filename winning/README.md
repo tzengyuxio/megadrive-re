@@ -10,7 +10,7 @@ KOEI，1993.JUL，Mega-CD 限定（MD 沒有卡帶版）。SFC 版（`~/works/su
 .venv/bin/python winning/verify_cd_faces.py                 # 約 15 秒
 ```
 
-- 映像預設讀 `roms/megacd/Winning Post (Japan).7z`（`--image` 可換），驗證用 Genesis Plus GX（`tools/gpgx.py`）。
+- 映像預設讀 `_original/megacd/Winning Post (Japan).7z`（`--image` 可換），驗證用 Genesis Plus GX（`tools/gpgx.py`）。
 - 顏色用 MAME 的 MD 色階（`cd.LEVELS`）。
 
 ## 檔案

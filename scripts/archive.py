@@ -1,7 +1,6 @@
-"""Copy one game's results into the game library (re-common §11), so the repo's roms/ and output/ can be removed later.
+"""Copy one game's results into the game library (re-common §11), so the repo's output/ can be removed later.
 
-Usage: .venv/bin/python scripts/archive.py GAME [GAME ...] | --all [--library DIR]
-       (default ~/game-library; run scripts/rebuild.py first)
+Usage: .venv/bin/python scripts/archive.py GAME [GAME ...] | --all      (library: tools/paths.py; run rebuild.py first)
 
 What goes where, by file name (GAMES below gives each game's library id, ROMs, fragment folders and extras):
   output/<file>                      -> <id>/<file>                 CSV, XLSX, PNG as they are
@@ -9,23 +8,22 @@ What goes where, by file name (GAMES below gives each game's library id, ROMs, f
   output/<folder>/ of anything else  -> <id>/<folder>/              the same rules, one level down
   output/portrait-sheet/*/out/*.png  -> <id>/sheets/                the rendered pages; manifests and copies dropped
   output/kaodata*/, output/<id>-md/  -> not kept                    kaodata datasets: the kaodata repo holds them
-  roms/<ROM>.zip                     -> _original/md/<ROM>.zip      and its sha1 (and the sha1 of each file inside)
-  roms/megacd/<image>.7z             -> _original/megacd/<image>.7z    in that folder's SHA1SUMS.txt; a Mega-CD game
-  roms/megacd/bios/*                 -> _original/megacd/bios/*        also copies the BIOS
+The ROMs are not copied: they are only in _original/md/ and _original/megacd/ (the BIOS in megacd/bios/), put there
+by scripts/add_rom.py; the script checks that each of the game's ROMs is there with its sha1.
 Fragment folders (no identity, an overview image already exists) are not kept. Files already in the library are
 overwritten, nothing there is deleted. The library README.md of the game and the status table (koei.md, md.md)
 are written by hand; the script only says when they are missing.
 """
 import argparse
-import hashlib
 import os
 import shutil
-import subprocess
+import sys
 import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ROMS = os.path.join(ROOT, "roms")
-MEGACD = os.path.join(ROMS, "megacd")
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+from paths import LIBRARY, ORIGINAL_MD, ORIGINAL_MEGACD
+
 # game folder -> library id (koei/... for KOEI games, md/... for the others), ROMs (megacd/... = Mega-CD image),
 # fragment folders of output/, extra files of output/ kept although under a skipped folder
 GAMES = {
@@ -67,60 +65,12 @@ def cbz(src: str, dst: str) -> int:
     return len(names)
 
 
-def sha1_file(path: str) -> str:
-    h = hashlib.sha1()
-    with open(path, "rb") as f:
-        for block in iter(lambda: f.read(1 << 20), b""):
-            h.update(block)
-    return h.hexdigest()
-
-
-def inner_sums(path: str, name: str) -> list[str]:
-    """sha1 of each file inside a .zip or .7z."""
-    if path.lower().endswith(".zip"):
-        with zipfile.ZipFile(path) as z:
-            return [f"{hashlib.sha1(z.read(i)).hexdigest()}  {name}/{i.filename}" for i in z.infolist() if not i.is_dir()]
-    if path.lower().endswith(".7z"):
-        # one pass: 7zz writes every member to stdout in listing order, split by the listed sizes (a solid archive
-        # would be decompressed again for each member if extracted one by one)
-        listing = subprocess.run(["7zz", "l", "-slt", "-ba", path], check=True, capture_output=True, text=True).stdout
-        members = []
-        for block in listing.split("\n\n"):
-            f = dict(line.split(" = ", 1) for line in block.splitlines() if " = " in line)
-            if f.get("CRC"):    # directories have no CRC
-                members.append((f["Path"], int(f["Size"])))
-        p = subprocess.Popen(["7zz", "x", "-so", path], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-        out = []
-        for m, size in members:
-            h = hashlib.sha1()
-            while size:
-                block = p.stdout.read(min(size, 1 << 20))
-                if not block:
-                    raise RuntimeError(f"7zz ended early in {path}: {m}")
-                h.update(block)
-                size -= len(block)
-            out.append(f"{h.hexdigest()}  {name}/{m}")
-        if p.stdout.read(1) or p.wait():
-            raise RuntimeError(f"7zz output does not match the listing of {path}")
-        return out
-    return []
-
-
-def archive_original(path: str, dst_dir: str, name: str) -> None:
-    """Copy path to dst_dir/name and put its sha1 lines in dst_dir's SHA1SUMS.txt (name may contain a subfolder)."""
-    os.makedirs(os.path.dirname(os.path.join(dst_dir, name)), exist_ok=True)
-    dst = os.path.join(dst_dir, name)
-    if not (os.path.exists(dst) and os.path.getsize(dst) == os.path.getsize(path) and sha1_file(dst) == sha1_file(path)):
-        shutil.copy2(path, dst)
-    lines = inner_sums(path, name) + [f"{sha1_file(path)}  {name}"]
-    sums = os.path.join(dst_dir, "SHA1SUMS.txt")
-    old = []
-    if os.path.exists(sums):
-        with open(sums, encoding="utf-8") as f:
-            old = f.read().splitlines()
-    keep = [x for x in old if x.split("  ", 1)[1] != name and not x.split("  ", 1)[1].startswith(name + "/")]
-    with open(sums, "w", encoding="utf-8") as f:
-        f.write("\n".join(sorted(keep + lines, key=lambda x: x.split("  ", 1)[1])) + "\n")
+def check_original(folder: str, name: str) -> None:
+    """The ROM must already be in _original/ with its sha1 recorded (scripts/add_rom.py puts it there)."""
+    with open(os.path.join(folder, "SHA1SUMS.txt"), encoding="utf-8") as f:
+        listed = {line.split("  ", 1)[1] for line in f.read().splitlines()}
+    if not os.path.exists(os.path.join(folder, name)) or name not in listed:
+        raise SystemExit(f"{name} is not in {folder} with a sha1: add it with scripts/add_rom.py")
 
 
 def is_kaodata(name: str) -> bool:
@@ -158,18 +108,11 @@ def archive(game: str, library: str) -> None:
     copy_output(src, dst, cfg.get("fragments", []))
     for extra in cfg.get("extras", []):
         shutil.copy2(os.path.join(src, extra), os.path.join(dst, os.path.basename(extra)))
-    cd = False
     for rom in cfg["roms"]:
         if rom.startswith("megacd/"):
-            cd = True
-            archive_original(os.path.join(ROMS, rom), os.path.join(library, "_original", "megacd"), rom[7:])
+            check_original(ORIGINAL_MEGACD, rom[7:])
         else:
-            archive_original(os.path.join(ROMS, rom), os.path.join(library, "_original", "md"), rom)
-    if cd:
-        for name in sorted(os.listdir(os.path.join(MEGACD, "bios"))):
-            if name != ".DS_Store":
-                archive_original(os.path.join(MEGACD, "bios", name), os.path.join(library, "_original", "megacd"),
-                                 f"bios/{name}")
+            check_original(ORIGINAL_MD, rom)
     print(f"  -> {dst}", flush=True)
     for need in [os.path.join(dst, "README.md"), os.path.join(library, cfg["id"].split("/")[0] + ".md")]:
         if not os.path.exists(need):
@@ -180,14 +123,13 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("games", nargs="*")
     ap.add_argument("--all", action="store_true")
-    ap.add_argument("--library", default=os.path.expanduser("~/game-library"))
     args = ap.parse_args()
     todo = sorted(GAMES) if args.all else args.games
     unknown = set(todo) - set(GAMES)
     if not todo or unknown:
         ap.error(f"games: {' '.join(sorted(GAMES))}" + (f"; unknown: {' '.join(sorted(unknown))}" if unknown else ""))
     for game in todo:
-        archive(game, args.library)
+        archive(game, LIBRARY)
 
 
 if __name__ == "__main__":

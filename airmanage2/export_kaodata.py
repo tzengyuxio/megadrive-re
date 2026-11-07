@@ -76,7 +76,7 @@ def build(rom_path: str) -> tuple[dict, list[bytes]]:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="匯出 kaodata 統一格式資料集 air2-md")
-    ap.add_argument("--rom", default=DEFAULT_ROM, help="roms/Air Management II - Koukuuou o Mezase (Japan).zip 或 .md")
+    ap.add_argument("--rom", default=DEFAULT_ROM, help="_original/md/Air Management II - Koukuuou o Mezase (Japan).zip 或 .md")
     ap.add_argument("--out", required=True, help="輸出目錄")
     args = ap.parse_args()
     meta, blobs = build(args.rom)

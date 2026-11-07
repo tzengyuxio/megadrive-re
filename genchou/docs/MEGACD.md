@@ -1,6 +1,6 @@
 # Mega-CD 版『蒼き狼と白き牝鹿・元朝秘史』
 
-KOEI，1993-09-24，Mega-CD（系統區序號 `GM T-76054 -00`）。映像：`roms/megacd/Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan).7z`（Redump，Track 01 MODE1/2352＋89 條音軌）。程式碼在 `cd.py`（載入）與 `rom.py` 的 `LAYOUTS["C"]`（記錄格式同卡帶日版，沿用同一套解碼器）。
+KOEI，1993-09-24，Mega-CD（系統區序號 `GM T-76054 -00`）。映像：`_original/megacd/Aoki Ookami to Shiroki Mejika - Genchou Hishi (Japan).7z`（Redump，Track 01 MODE1/2352＋89 條音軌）。程式碼在 `cd.py`（載入）與 `rom.py` 的 `LAYOUTS["C"]`（記錄格式同卡帶日版，沿用同一套解碼器）。
 
 和卡帶版相比，遊戲本體幾乎原封不動搬到副 CPU 上，另外：
 

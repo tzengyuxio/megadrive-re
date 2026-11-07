@@ -1,6 +1,6 @@
 # MD 三國志III ROM 格式
 
-KOEI，MD，1992.AUG。檔案 `roms/Sangokushi III (Japan).zip`（1.5 MB）。
+KOEI，MD，1992.AUG。檔案 `_original/md/Sangokushi III (Japan).zip`（1.5 MB）。
 
 本文的偏移一律是**檔案偏移**，等於 68000 位址（`$1BC64` = 檔案 `0x1BC64`）。遊戲是編譯過的 C：參數全放在 stack（`link A6` 後從 `$8(A6)` 起，每個參數一個 long），回傳值在 D0。資料內容大致就是 SFC 版（`~/works/superfamicom-re/san3/`）的表：16 位元欄位改成**大端**，為了 word 對齊多出 pad byte，文字從 SFC 自己的字碼改成 **Shift-JIS**。
 

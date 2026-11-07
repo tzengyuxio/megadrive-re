@@ -241,8 +241,8 @@ def build(rom_path: str, cd_path: str | None = None) -> tuple[dict, list[bytes]]
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="匯出 kaodata 統一格式資料集 genchou-md")
-    ap.add_argument("--rom", default=R.DEFAULT_ROM, help="roms/ 的 zip 或 .md（預設日版）")
-    ap.add_argument("--cd", default=cd.DEFAULT_IMAGE, help="Mega-CD 映像（roms/megacd/ 的 .7z；只用於日版）")
+    ap.add_argument("--rom", default=R.DEFAULT_ROM, help="_original/md/ 的 zip 或 .md（預設日版）")
+    ap.add_argument("--cd", default=cd.DEFAULT_IMAGE, help="Mega-CD 映像（_original/megacd/ 的 .7z；只用於日版）")
     ap.add_argument("--no-cd", action="store_true", help="不含 Mega-CD 版")
     ap.add_argument("--out", required=True, help="輸出目錄")
     args = ap.parse_args()
