@@ -36,7 +36,7 @@ SURNAMES = os.path.join(HERE, "data", "surnames.tsv")
 # the historical one as `nameHistorical` (spec §7; 辛毘 is only a variant form of 辛毗, so it is left out).
 # Same names as the SFC version (the MD name table is the SFC one, code for code).
 NAME_HISTORICAL = {
-    "張資": "張咨", "雷同": "雷銅", "夏侯懋": "夏侯楙", "桓楷": "桓階", "陳嬉": "陳紀",
+    "張資": "張咨", "雷同": "雷銅", "夏侯懋": "夏侯楙", "桓楷": "桓階",
     "李湛": "李堪", "寥化": "廖化", "歩鷙": "歩隲", "蔡仲": "蔡中", "尚拳": "向挙", "尚寵": "向寵",
     "鮑龍": "鮑隆", "朵思王": "朶思大王", "金環結": "金環三結", "沙摩可": "沙摩柯", "母丘倹": "毌丘倹",
 }
