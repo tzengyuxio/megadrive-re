@@ -5,7 +5,7 @@
 
 ## 素材庫
 
-- [ ] 清掉 repo 裡已封存的原始檔與產出 — 18 款已用 `scripts/archive.py` 複製進素材庫（狀態「封存（repo 未清）」）；素材庫備份到 dongzhi（預定 2026-11-09）後，刪 `roms/`（工具已改讀 `_original/`，2026-11-07 移開 `roms/` 跑過 rebuild --all 與 Mega-CD／MAME 驗證；`megacd/.cache/` 已改到 `.emu/megacd/`）與各遊戲的 `output/`，再把狀態表改成「封存」（2026-11-07）
+- [ ] 清掉 repo 裡已封存的原始檔與產出 — 18 款已用 `scripts/archive.py` 複製進素材庫（狀態「入庫」）；素材庫備份到 dongzhi（預定 2026-11-09）後，刪 `roms/`（工具已改讀 `_original/`，2026-11-07 移開 `roms/` 跑過 rebuild --all 與 Mega-CD／MAME 驗證；`megacd/.cache/` 已改到 `.emu/megacd/`）與各遊戲的 `output/`，再把狀態表改成「封存」（2026-11-07）
 
 ## genchou
 
